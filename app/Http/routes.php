@@ -15,6 +15,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::post('/landing/{service}/{code}', function ($service, $post, \Illuminate\Http\Request $request) {
+    error_log(json_encode([$service, $post, $request->all()]));
+});
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
