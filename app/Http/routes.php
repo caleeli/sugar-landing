@@ -15,12 +15,48 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('/landing/{service}/{code}', function ($service, $post, \Illuminate\Http\Request $request) {
-    error_log(json_encode([$service, $post, $request->all()]));
+Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\Http\Request $request) {
+    error_log(json_encode([$service, $code, $request->all()]));
+
+    $sugar = new \Asakusuma\SugarWrapper\Rest;
+
+    $sugar->setUrl(env('SUGAR_URL').'/service/v2/rest.php');
+    $sugar->setUsername(env('SUGAR_USER'));
+    $sugar->setPassword(env('SUGAR_PASSWORD'));
+
+    $sugar->connect();
+
+    $results = $sugar->set("Leads", [
+        'crm_fullname_c' => $request->input('nombre_y_apellido'),
+        'crm_variant_c' => $request->input('variant'),
+        'crm_phone_c' => $request->input('telefono'),
+        'crm_city_c' => $request->input('ciudad'),
+        'crm_landing_code_c' => $code,
+    ]);
+
+    error_log(print_r($results, true));
 });
 
-Route::get('/landing/{service}/{code}', function ($service, $post, \Illuminate\Http\Request $request) {
-    return "hello $service, $post";
+Route::get('/landing/{service}/{code}', function ($service, $code, \Illuminate\Http\Request $request) {
+    error_log(json_encode([$service, $code, $request->all()]));
+
+    $sugar = new \Asakusuma\SugarWrapper\Rest;
+
+    $sugar->setUrl(env('SUGAR_URL').'/service/v2/rest.php');
+    $sugar->setUsername(env('SUGAR_USER'));
+    $sugar->setPassword(env('SUGAR_PASSWORD'));
+
+    $sugar->connect();
+
+    $results = $sugar->set("Leads", [
+        'crm_fullname_c' => $request->input('nombre_y_apellido'),
+        'crm_variant_c' => $request->input('variant'),
+        'crm_phone_c' => $request->input('telefono'),
+        'crm_city_c' => $request->input('ciudad'),
+        'crm_landing_code_c' => $code,
+    ]);
+
+    error_log(print_r($results, true));
 });
 
 /*
