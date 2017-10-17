@@ -36,7 +36,7 @@ Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\
 
     $results = $sugar->set("Leads", $lead);
 
-    error_log(print_r($lead, true));
+    error_log(print_r($request->json(), true));
     error_log(print_r($results, true));
 });
 
@@ -52,7 +52,7 @@ Route::get('/landing/{service}/{code}', function ($service, $code, \Illuminate\H
     $sugar->connect();
 
     $results = $sugar->set("Leads", [
-        'crm_fullname_c' => $request->input('nombre_y_apellido'),
+        'crm_fullname_c' => $request->all('nombre_y_apellido'),
         'crm_variant_c' => $request->input('variant'),
         'crm_phone_c' => $request->input('telefono'),
         'crm_city_c' => $request->input('ciudad'),
