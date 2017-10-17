@@ -16,7 +16,9 @@ Route::get('/', function () {
 });
 
 Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\Http\Request $request) {
-    error_log(json_encode([$service, $code, $request->all()]));
+    $all = $request->all();
+    $data_json = json_decode($all['data_json']);
+    error_log(json_encode([$service, $code, $all]));
 
     $sugar = new \Asakusuma\SugarWrapper\Rest;
 
@@ -25,15 +27,13 @@ Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\
     $sugar->setPassword(env('SUGAR_PASSWORD'));
 
     $sugar->connect();
-    error_log(var_export($request->file('json_data'), true));
-    error_log(var_export($request->all()['json_data'], true));
+    error_log(json_encode($data_json));
     
-    $data = json_decode($request->input('json_data'));
     $lead = [
-        'crm_fullname_c' => $data->nombre_y_apellido,
-        'crm_variant_c' => $data->variant,
-        'crm_phone_c' => $data->telefono,
-        'crm_city_c' => $data->ciudad,
+        'crm_fullname_c' => $data_json->nombre_y_apellido,
+        'crm_variant_c' => $data_json->variant,
+        'crm_phone_c' => $data_json->telefono,
+        'crm_city_c' => $data_json->ciudad,
         'crm_landing_code_c' => $code,
     ];
 
