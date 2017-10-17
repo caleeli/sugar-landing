@@ -25,18 +25,18 @@ Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\
     $sugar->setPassword(env('SUGAR_PASSWORD'));
 
     $sugar->connect();
-
+    $data = json_decode($request->input('json_data'));
+    error_log(print_r($data, true));
     $lead = [
-        'crm_fullname_c' => $request->input('nombre_y_apellido'),
-        'crm_variant_c' => $request->input('variant'),
-        'crm_phone_c' => $request->input('telefono'),
-        'crm_city_c' => $request->input('ciudad'),
+        'crm_fullname_c' => $data->nombre_y_apellido,
+        'crm_variant_c' => $data->variant,
+        'crm_phone_c' => $data->telefono,
+        'crm_city_c' => $data->ciudad,
         'crm_landing_code_c' => $code,
     ];
 
     $results = $sugar->set("Leads", $lead);
 
-    error_log(print_r($request->json(), true));
     error_log(print_r($results, true));
 });
 
