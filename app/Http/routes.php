@@ -25,7 +25,8 @@ Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\
     $sugar->setPassword(env('SUGAR_PASSWORD'));
 
     $sugar->connect();
-    error_log(var_export($request->input('json_data'), true));
+    error_log(var_export($request->file('json_data'), true));
+    error_log(var_export($request->all()['json_data'], true));
     
     $data = json_decode($request->input('json_data'));
     $lead = [
