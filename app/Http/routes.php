@@ -26,14 +26,17 @@ Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\
 
     $sugar->connect();
 
-    $results = $sugar->set("Leads", [
+    $lead = [
         'crm_fullname_c' => $request->input('nombre_y_apellido'),
         'crm_variant_c' => $request->input('variant'),
         'crm_phone_c' => $request->input('telefono'),
         'crm_city_c' => $request->input('ciudad'),
         'crm_landing_code_c' => $code,
-    ]);
+    ];
 
+    $results = $sugar->set("Leads", $lead);
+
+    error_log(print_r($lead, true));
     error_log(print_r($results, true));
 });
 
