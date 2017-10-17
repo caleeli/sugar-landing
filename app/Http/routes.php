@@ -25,8 +25,9 @@ Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\
     $sugar->setPassword(env('SUGAR_PASSWORD'));
 
     $sugar->connect();
+    error_log(var_export($request->input('json_data'), true));
+    
     $data = json_decode($request->input('json_data'));
-    error_log(print_r($data, true));
     $lead = [
         'crm_fullname_c' => $data->nombre_y_apellido,
         'crm_variant_c' => $data->variant,
