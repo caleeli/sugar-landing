@@ -50,6 +50,6 @@ class Lead
                 [
                 'where' => $where
                 ]
-            )[0];
+            );
     }
 }
