@@ -9,7 +9,7 @@ namespace App;
  */
 class Lead
 {
-    const COD_AGENDA = 'sci_cod_agenda';
+    const COD_AGENDA = 'sci_cod_agenda_c';
     const FULLNAME = 'crm_fullname_c';
     const VARIANT = 'crm_variant_c';
     const PHONE = 'crm_phone_c';
