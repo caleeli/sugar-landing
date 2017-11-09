@@ -48,7 +48,7 @@ class Lead
         return $sugar->get(
                 "Leads", ['id', self::FULLNAME, self::PHONE, self::CITY],
                 [
-                'where' => $where
+                'where' => '1=1'
                 ]
             );
     }
