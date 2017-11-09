@@ -37,9 +37,20 @@ class Lead
         return $leads[0];
     }
 
-    public static function save($data)
+    public static function update($id, $data)
     {
         $sugar = Sugar::getConnection();
+        $where = "id='$id'";
+        $leads = $sugar->get(
+                "Leads", ['id'],
+                [
+                'where' => $where
+                ]
+            );
+        if (empty($leads)) {
+            throw new Exception("Lead not found $id");
+        }
+        $data['id'] = $id;
         return $sugar->set("Leads", $data);
     }
 

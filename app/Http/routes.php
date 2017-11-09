@@ -71,9 +71,8 @@ Route::post('/lead/{id}', function ($id, \Illuminate\Http\Request $request) {
         foreach($json as $key => $value) {
             $data[$key] = $value;
         }
-        $data['id'] = $id;
 
-        $results = \App\Lead::save($data);
+        $results = \App\Lead::update($id, $data);
 
         error_log(print_r($results, true));
 
