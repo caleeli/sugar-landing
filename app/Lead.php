@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+use Exception;
 
 /**
  * Get Leads
