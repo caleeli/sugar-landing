@@ -78,10 +78,10 @@ Route::post('/lead/{id}', function ($id, \Illuminate\Http\Request $request) {
 
         return ["success" => true, "data" => $results];
     } catch (Exception $ee) {
-        return [
+        return response([
             "success" => false,
             "error"   => $ee->getMessage()
-        ];
+            ], 400);
     }
 });
 
@@ -102,10 +102,10 @@ Route::post('/lead/agenda/{codigo}', function ($codigo, \Illuminate\Http\Request
 
         return ["success" => true, "data" => $results];
     } catch (Exception $ee) {
-        return [
+        return response([
             "success" => false,
             "error"   => $ee->getMessage()
-        ];
+            ], 400);
     }
 });
 
