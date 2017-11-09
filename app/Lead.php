@@ -24,12 +24,16 @@ class Lead
     {
         $sugar = Sugar::getConnection();
         $where = self::COD_AGENDA . "='$codigo'";
-        return $sugar->get(
+        $leads = $sugar->get(
                 "Leads", ['id', self::COD_AGENDA],
                 [
                 'where' => $where
                 ]
-            )[0];
+            );
+        if (empty($leads)) {
+            throw new Exception("Lead not found for " . \App\Lead::COD_AGENDA . "=$codigo");
+        }
+        return $leads[0];
     }
 
     public static function save($data)
