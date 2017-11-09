@@ -101,6 +101,13 @@ Route::post('/lead/agenda/{codigo}', function ($codigo, \Illuminate\Http\Request
     return ["success" => true, "data" => $results];
 });
 
+Route::get('/lead/buscar/{busqueda}', function ($busqueda, \Illuminate\Http\Request $request) {
+
+    $leads = \App\Lead::findFromLanding($busqueda);
+
+    return ["success" => true, "data" => $leads];
+});
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes

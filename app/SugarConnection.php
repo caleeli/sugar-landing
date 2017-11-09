@@ -12,6 +12,10 @@ class Sugar
 {
     private static $connection=null;
 
+    /**
+     *
+     * @return \Asakusuma\SugarWrapper\Rest
+     */
     public static function getConnection() {
         if (empty(self::$connection)) {
             self::$connection = new Rest;
