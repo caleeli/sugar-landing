@@ -64,6 +64,43 @@ Route::get('/landing/{service}/{code}', function ($service, $code, \Illuminate\H
     error_log(print_r($results, true));
 });
 
+Route::post('/lead/{id}', function ($id, \Illuminate\Http\Request $request) {
+    $json = $request->json();
+    $data = [];
+    foreach($json as $key => $value) {
+        $data[$key] = $value;
+    }
+    $data['id'] = $id;
+
+    $results = \App\Lead::save($data);
+
+    error_log(print_r($results, true));
+
+    return ["success" => true, "data" => $results];
+});
+
+Route::post('/lead/agenda/{codigo}', function ($codigo, \Illuminate\Http\Request $request) {
+    $json = $request->json();
+    $data = [];
+    foreach($json as $key => $value) {
+        $data[$key] = $value;
+    }
+
+    $lead = \App\Lead::findByAgenda($codigo);
+    if (empty($lead['id'])) {
+        return [
+            "error" => "Lead not found for " . \App\Lead::COD_AGENDA . "=$codigo"
+        ];
+    }
+    $data['id'] = $lead['id'];
+
+    $results = \App\Lead::save($data);
+
+    error_log(print_r($results, true));
+
+    return ["success" => true, "data" => $results];
+});
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
