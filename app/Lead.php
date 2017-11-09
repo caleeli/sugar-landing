@@ -42,13 +42,14 @@ class Lead
     {
         $like = '%' . preg_replace('/\s+|\'"/', '%', $query) . '%';
         $sugar = Sugar::getConnection();
-        $where = self::FULLNAME . " like '$like' OR"
+        $where = 'id in (select id_c from leads_cstm where '. self::FULLNAME . " like '$like' OR"
             . self::PHONE . " like '$like' OR"
-            . self::CITY . " like '$like'";
+            . self::CITY . " like '$like'"
+            . ')';
         return $sugar->get(
                 "Leads", ['id', self::FULLNAME, self::PHONE, self::CITY],
                 [
-                'where' => '1=1'
+                'where' => $where
                 ]
             );
     }
