@@ -30,10 +30,11 @@ Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\
     error_log(json_encode($data_json));
     
     $lead = [
-        'crm_fullname_c' => $data_json->nombre_y_apellido[0],
+        'crm_fullname_c' => $data_json->crm_fullname_c[0],
         'crm_variant_c' => $data_json->variant[0],
-        'crm_phone_c' => $data_json->telefono[0],
+        'phone_mobile' => $data_json->phone_mobile[0],
         'crm_city_c' => $data_json->ciudad[0],
+        'crm_amount_c' => $data_json->crm_amount_c[0],
         'crm_landing_code_c' => $code,
     ];
 
