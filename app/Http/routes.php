@@ -33,7 +33,7 @@ Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\
         'crm_fullname_c' => $data_json->crm_fullname_c[0],
         'crm_variant_c' => $data_json->variant[0],
         'phone_mobile' => $data_json->phone_mobile[0],
-        'crm_city_c' => $data_json->ciudad[0],
+        'crm_city_c' => $data_json->crm_city_c[0],
         'crm_amount_c' => $data_json->crm_amount_c[0],
         'crm_landing_code_c' => $code,
     ];
