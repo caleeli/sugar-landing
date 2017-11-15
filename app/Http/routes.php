@@ -20,7 +20,9 @@ Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\
     $data_json = json_decode($all['data_json']);
     error_log(json_encode([$service, $code, $all]));
     error_log(json_encode($data_json));
-    
+    if ($service!='unbounce') {
+        return;
+    }
     $lead = \App\Lead::fromUnbounce($data_json);
     $lead['crm_landing_code_c'] = $code;
     $results = \App\Lead::save($lead);
