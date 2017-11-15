@@ -17,6 +17,10 @@ class Lead
     const CITY = 'crm_city_c';
     const LANDING_CODE = 'crm_landing_code_c';
 
+    private static $alias = [
+        'variant' => 'crm_variant_c',
+    ];
+
     /**
      *
      * @param string $codigo
@@ -67,5 +71,21 @@ class Lead
                 'where' => $where
                 ]
             );
+    }
+
+    public static function save($data)
+    {
+        $sugar = Sugar::getConnection();
+        return $sugar->set("Leads", $data);
+    }
+
+    public static function fromUnbounce($input)
+    {
+        $data = [];
+        foreach ($input as $key => $value) {
+            $key = isset(self::$alias[$key]) ? self::$alias[$key] : $key;
+            $data[$key] = implode(';', $value);
+        }
+        return $data;
     }
 }

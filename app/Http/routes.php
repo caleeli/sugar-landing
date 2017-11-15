@@ -19,26 +19,10 @@ Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\
     $all = $request->all();
     $data_json = json_decode($all['data_json']);
     error_log(json_encode([$service, $code, $all]));
-
-    $sugar = new \Asakusuma\SugarWrapper\Rest;
-
-    $sugar->setUrl(env('SUGAR_URL').'/service/v2/rest.php');
-    $sugar->setUsername(env('SUGAR_USER'));
-    $sugar->setPassword(env('SUGAR_PASSWORD'));
-
-    $sugar->connect();
     error_log(json_encode($data_json));
     
-    $lead = [
-        'crm_fullname_c' => $data_json->crm_fullname_c[0],
-        'crm_variant_c' => $data_json->variant[0],
-        'phone_mobile' => $data_json->phone_mobile[0],
-        'crm_city_c' => $data_json->crm_city_c[0],
-        'crm_amount_c' => $data_json->crm_amount_c[0],
-        'crm_landing_code_c' => $code,
-    ];
-
-    $results = $sugar->set("Leads", $lead);
+    $lead = \App\Lead::fromUnbounce($data_json);
+    $results = \App\Lead::save($lead);
 
     error_log(print_r($results, true));
 });
