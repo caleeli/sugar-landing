@@ -13,7 +13,8 @@ class Lead
     const COD_AGENDA = 'sci_cod_agenda_c';
     const FULLNAME = 'crm_fullname_c';
     const VARIANT = 'crm_variant_c';
-    const PHONE = 'crm_phone_c';
+    const AMOUNT = 'crm_amount_c';
+    const PHONE = 'phone_mobile';
     const CITY = 'crm_city_c';
     const LANDING_CODE = 'crm_landing_code_c';
 
@@ -66,7 +67,7 @@ class Lead
             . self::PHONE . " like '$like' OR "
             . self::CITY . " like '$like'";
         return $sugar->get(
-                "Leads", ['id', self::FULLNAME, self::PHONE, self::CITY],
+                "Leads", ['*'],//['id', self::FULLNAME, self::PHONE, self::CITY, self::AMOUNT, 'date_entered'],
                 [
                 'where' => $where
                 ]
