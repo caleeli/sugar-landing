@@ -67,9 +67,17 @@ class Lead
             . self::PHONE . " like '$like' OR "
             . self::CITY . " like '$like'";
         return $sugar->get(
-                "Leads", ['id', self::FULLNAME, self::PHONE, self::CITY, self::AMOUNT, 'date_entered'],
+                "Leads", [
+                    'id',
+                    self::FULLNAME,
+                    self::PHONE,
+                    self::CITY,
+                    self::AMOUNT,
+                    'date_entered',
+                    self::LANDING_CODE,
+                ],
                 [
-                'where' => $where
+                    'where' => $where
                 ]
             );
     }
