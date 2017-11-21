@@ -141,16 +141,6 @@ class Lead
                         $lead[self::APELLIDO_MATERNO] = $names[$count - 1];
                 }
             }
-
-            $name = explode(' ',
-                            preg_replace('/\s+/', ' ', $lead[self::FULLNAME]), 2);
-            $name[1] = !isset($name[1]) ?: '';
-            $apellido = explode(' ',
-                            preg_replace('/\s+/', ' ', $lead[self::FULLNAME]), 2);
-            $name[1] = !isset($name[1]) ?: '';
-            $lead[self::PRIMER_NOMBRE] = !empty($lead[self::PRIMER_NOMBRE]) ?: $name[0];
-            $lead[self::SEGUNDO_NOMBRE] = !empty($lead[self::SEGUNDO_NOMBRE]) ?: $name[1];
-            $lead[self::SEGUNDO_NOMBRE] = !empty($lead[self::SEGUNDO_NOMBRE]) ?: $name[1];
         }
         return $leads;
     }
