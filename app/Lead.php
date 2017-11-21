@@ -152,6 +152,7 @@ class Lead
             $lead[self::SEGUNDO_NOMBRE] = !empty($lead[self::SEGUNDO_NOMBRE]) ?: $name[1];
             $lead[self::SEGUNDO_NOMBRE] = !empty($lead[self::SEGUNDO_NOMBRE]) ?: $name[1];
         }
+        return $leads;
     }
 
     public static function save($data)
