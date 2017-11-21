@@ -104,6 +104,56 @@ class Lead
             );
     }
 
+    private static function completeFromLanding($leads)
+    {
+        foreach ($leads as $lead) {
+            $fullname = preg_replace('/\s+/', ' ', $lead[self::FULLNAME]);
+            $names = explode(' ', $fullname);
+            if (empty($lead[self::PRIMER_NOMBRE]) && empty($lead[self::SEGUNDO_NOMBRE])) {
+                $count = count($name);
+                switch($count) {
+                    case 4:
+                        $lead[self::PRIMER_NOMBRE] = $names[0];
+                        $lead[self::SEGUNDO_NOMBRE] = $names[1];
+                        $lead[self::APELLIDO_PATERNO] = $names[2];
+                        $lead[self::APELLIDO_MATERNO] = $names[3];
+                        break;
+                    case 3:
+                        $lead[self::PRIMER_NOMBRE] = $names[0];
+                        $lead[self::APELLIDO_PATERNO] = $names[1];
+                        $lead[self::APELLIDO_MATERNO] = $names[2];
+                        break;
+                    case 2:
+                        $lead[self::PRIMER_NOMBRE] = $names[0];
+                        $lead[self::APELLIDO_PATERNO] = $names[1];
+                        break;
+                    case 1:
+                        $lead[self::PRIMER_NOMBRE] = $names[0];
+                        break;
+                    default:
+                        $lead[self::PRIMER_NOMBRE] = $names[0];
+                        $lead[self::SEGUNDO_NOMBRE] = '';
+                        for ($i = 1; $i < $count - 2; $i++) {
+                            $lead[self::SEGUNDO_NOMBRE] .= " " . $names[$i];
+                        }
+                        $lead[self::SEGUNDO_NOMBRE] = trim($lead[self::SEGUNDO_NOMBRE]);
+                        $lead[self::APELLIDO_PATERNO] = $names[$count - 2];
+                        $lead[self::APELLIDO_MATERNO] = $names[$count - 1];
+                }
+            }
+
+            $name = explode(' ',
+                            preg_replace('/\s+/', ' ', $lead[self::FULLNAME]), 2);
+            $name[1] = !isset($name[1]) ?: '';
+            $apellido = explode(' ',
+                            preg_replace('/\s+/', ' ', $lead[self::FULLNAME]), 2);
+            $name[1] = !isset($name[1]) ?: '';
+            $lead[self::PRIMER_NOMBRE] = !empty($lead[self::PRIMER_NOMBRE]) ?: $name[0];
+            $lead[self::SEGUNDO_NOMBRE] = !empty($lead[self::SEGUNDO_NOMBRE]) ?: $name[1];
+            $lead[self::SEGUNDO_NOMBRE] = !empty($lead[self::SEGUNDO_NOMBRE]) ?: $name[1];
+        }
+    }
+
     public static function save($data)
     {
         $sugar = Sugar::getConnection();
