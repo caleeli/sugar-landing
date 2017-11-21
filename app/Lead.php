@@ -77,7 +77,7 @@ class Lead
         $where = self::FULLNAME . " like '$like' OR "
             . self::PHONE . " like '$like' OR "
             . self::CITY . " like '$like'";
-        return $sugar->get(
+        return self::completeFromLanding($sugar->get(
                 "Leads", [
                     'id',
                     self::FULLNAME,
@@ -101,12 +101,12 @@ class Lead
                 [
                     'where' => $where
                 ]
-            );
+            ));
     }
 
     private static function completeFromLanding($leads)
     {
-        foreach ($leads as $lead) {
+        foreach ($leads as &$lead) {
             $fullname = preg_replace('/\s+/', ' ', $lead[self::FULLNAME]);
             $names = explode(' ', $fullname);
             if (empty($lead[self::PRIMER_NOMBRE]) && empty($lead[self::SEGUNDO_NOMBRE])) {
