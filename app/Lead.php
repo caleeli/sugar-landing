@@ -110,7 +110,7 @@ class Lead
             $fullname = preg_replace('/\s+/', ' ', $lead[self::FULLNAME]);
             $names = explode(' ', $fullname);
             if (empty($lead[self::PRIMER_NOMBRE]) && empty($lead[self::SEGUNDO_NOMBRE])) {
-                $count = count($name);
+                $count = count($names);
                 switch($count) {
                     case 4:
                         $lead[self::PRIMER_NOMBRE] = $names[0];
