@@ -310,8 +310,8 @@
         <!-- Page-Level Scripts -->
         <script>
 $(document).ready(function () {
-    //window.API_BASE = 'http://171.3.0.46:8080';
-    window.API_BASE = 'http://localhost:6060';
+    window.API_BASE = '/';
+    //window.API_BASE = 'http://localhost:6060';
     $('.footable').footable();
     var app = new Vue({
         el: '#wrapper',
@@ -322,7 +322,7 @@ $(document).ready(function () {
                 telefono: '',
                 nombre: '',
                 apellido: '',
-                leadIsOpen: true,
+                leadIsOpen: false,
                 lead: {},
                 documentos: [],
                 extensiones: [],
