@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+
 use Exception;
 
 /**
@@ -17,20 +18,40 @@ class Lead
     const PHONE = 'phone_mobile';
     const CITY = 'crm_city_c';
     const LANDING_CODE = 'crm_landing_code_c';
-    const PRIMER_NOMBRE= 'crm_primer_nombre_c';
-    const SEGUNDO_NOMBRE= 'crm_segundo_nombre_c';
-    const APELLIDO_PATERNO= 'crm_apellido_paterno_c';
-    const APELLIDO_MATERNO= 'crm_apellido_materno_c';
-    const APELLIDO_CASADA= 'crm_apellido_casada_c';
-    const TIPO_DOCUMENTO= 'crm_tipo_documento_c';
-    const NRO_DOCUMENTO= 'crm_nro_documento_c';
-    const EXTENSION= 'crm_extension_c';
-    const CC_CIUDAD= 'cc_ciudad_c';
-    const CC_AGENCIA= 'cc_agencia_c';
-    const CC_USUARIO= 'cc_usuario_c';
+    const FIRST_NAME = 'first_name';
+    const LAST_NAME = 'last_name';
+    const PRIMER_NOMBRE = 'crm_primer_nombre_c';
+    const SEGUNDO_NOMBRE = 'crm_segundo_nombre_c';
+    const APELLIDO_PATERNO = 'crm_apellido_paterno_c';
+    const APELLIDO_MATERNO = 'crm_apellido_materno_c';
+    const APELLIDO_CASADA = 'crm_apellido_casada_c';
+    const TIPO_DOCUMENTO = 'crm_tipo_documento_c';
+    const NRO_DOCUMENTO = 'crm_nro_documento_c';
+    const EXTENSION = 'crm_extension_c';
+    const CC_CIUDAD = 'cc_ciudad_c';
+    const CC_AGENCIA = 'cc_agencia_c';
+    const CC_USUARIO = 'cc_usuario_c';
 
     private static $alias = [
         'variant' => 'crm_variant_c',
+    ];
+
+    private static $aliasCC = [
+        "cc_nro_oportunidad" => 'id',
+        "cc_nombre_completo" => 'crm_fullname_c',
+        "cc_ciudad"          => 'cc_ciudad_c',
+        "cc_email"           => 'email1',
+        "cc_agencia"         => 'cc_agencia_c',
+        "cc_usuario"         => 'cc_usuario_c',
+        "cc_nombre"          => 'crm_primer_nombre_c',
+        "cc_segundo_nombre"  => 'crm_segundo_nombre_c',
+        "cc_paterno"         => 'crm_apellido_paterno_c',
+        "cc_materno"         => 'crm_apellido_materno_c',
+        "cc_apellido_casada" => 'crm_apellido_casada_c',
+        "cc_nro_documento"   => 'crm_nro_documento_c',
+        "cc_tipo_documento"  => 'crm_tipo_documento_c',
+        "cc_telefono"        => 'phone_mobile',
+        "cc_nro_producto"    => 'cc_producto_c',
     ];
 
     /**
@@ -42,11 +63,11 @@ class Lead
         $sugar = Sugar::getConnection();
         $where = self::COD_AGENDA . "='$codigo'";
         $leads = $sugar->get(
-                "Leads", ['id', self::COD_AGENDA],
-                [
-                'where' => $where
-                ]
-            );
+            "Leads", ['id', self::COD_AGENDA],
+            [
+            'where' => $where
+            ]
+        );
         if (empty($leads)) {
             throw new Exception("Lead not found for " . \App\Lead::COD_AGENDA . "=$codigo");
         }
@@ -58,11 +79,11 @@ class Lead
         $sugar = Sugar::getConnection();
         $where = "id='$id'";
         $leads = $sugar->get(
-                "Leads", ['id'],
-                [
-                'where' => $where
-                ]
-            );
+            "Leads", ['id'],
+            [
+            'where' => $where
+            ]
+        );
         if (empty($leads)) {
             throw new Exception("Lead not found $id");
         }
@@ -78,7 +99,8 @@ class Lead
             . self::PHONE . " like '$like' OR "
             . self::CITY . " like '$like'";
         return self::completeFromLanding($sugar->get(
-                "Leads", [
+                    "Leads",
+                    [
                     'id',
                     self::FULLNAME,
                     self::PHONE,
@@ -97,52 +119,60 @@ class Lead
                     self::CC_CIUDAD,
                     self::CC_AGENCIA,
                     self::CC_USUARIO,
-                ],
-                [
+                    ], [
                     'where' => $where
-                ]
-            ));
+                    ]
+        ));
     }
 
     private static function completeFromLanding($leads)
     {
         foreach ($leads as &$lead) {
-            $fullname = preg_replace('/\s+/', ' ', $lead[self::FULLNAME]);
-            $names = explode(' ', $fullname);
             if (empty($lead[self::PRIMER_NOMBRE]) && empty($lead[self::SEGUNDO_NOMBRE])) {
-                $count = count($names);
-                switch($count) {
-                    case 4:
-                        $lead[self::PRIMER_NOMBRE] = $names[0];
-                        $lead[self::SEGUNDO_NOMBRE] = $names[1];
-                        $lead[self::APELLIDO_PATERNO] = $names[2];
-                        $lead[self::APELLIDO_MATERNO] = $names[3];
-                        break;
-                    case 3:
-                        $lead[self::PRIMER_NOMBRE] = $names[0];
-                        $lead[self::APELLIDO_PATERNO] = $names[1];
-                        $lead[self::APELLIDO_MATERNO] = $names[2];
-                        break;
-                    case 2:
-                        $lead[self::PRIMER_NOMBRE] = $names[0];
-                        $lead[self::APELLIDO_PATERNO] = $names[1];
-                        break;
-                    case 1:
-                        $lead[self::PRIMER_NOMBRE] = $names[0];
-                        break;
-                    default:
-                        $lead[self::PRIMER_NOMBRE] = $names[0];
-                        $lead[self::SEGUNDO_NOMBRE] = '';
-                        for ($i = 1; $i < $count - 2; $i++) {
-                            $lead[self::SEGUNDO_NOMBRE] .= " " . $names[$i];
-                        }
-                        $lead[self::SEGUNDO_NOMBRE] = trim($lead[self::SEGUNDO_NOMBRE]);
-                        $lead[self::APELLIDO_PATERNO] = $names[$count - 2];
-                        $lead[self::APELLIDO_MATERNO] = $names[$count - 1];
-                }
+                static::completeLeadNames($lead);
             }
         }
         return $leads;
+    }
+
+    public static function completeLeadNames(&$lead)
+    {
+        $fullname = preg_replace('/\s+/', ' ', $lead[self::FULLNAME]);
+        $names = explode(' ', $fullname);
+        $count = count($names);
+        switch ($count) {
+            case 4:
+                $lead[self::PRIMER_NOMBRE] = $names[0];
+                $lead[self::SEGUNDO_NOMBRE] = $names[1];
+                $lead[self::APELLIDO_PATERNO] = $names[2];
+                $lead[self::APELLIDO_MATERNO] = $names[3];
+                break;
+            case 3:
+                $lead[self::PRIMER_NOMBRE] = $names[0];
+                $lead[self::APELLIDO_PATERNO] = $names[1];
+                $lead[self::APELLIDO_MATERNO] = $names[2];
+                break;
+            case 2:
+                $lead[self::PRIMER_NOMBRE] = $names[0];
+                $lead[self::APELLIDO_PATERNO] = $names[1];
+                break;
+            case 1:
+                $lead[self::PRIMER_NOMBRE] = $names[0];
+                break;
+            default:
+                $lead[self::PRIMER_NOMBRE] = $names[0];
+                $lead[self::SEGUNDO_NOMBRE] = '';
+                for ($i = 1; $i < $count - 2; $i++) {
+                    $lead[self::SEGUNDO_NOMBRE] .= " " . $names[$i];
+                }
+                $lead[self::SEGUNDO_NOMBRE] = trim($lead[self::SEGUNDO_NOMBRE]);
+                $lead[self::APELLIDO_PATERNO] = $names[$count - 2];
+                $lead[self::APELLIDO_MATERNO] = $names[$count - 1];
+        }
+        $lead[self::FIRST_NAME] = preg_replace('/\s+/', ' ', @$lead[self::PRIMER_NOMBRE] . ' '
+            . @$lead[self::SEGUNDO_NOMBRE]);
+        $lead[self::LAST_NAME] = preg_replace('/\s+/', ' ', @$lead[self::APELLIDO_PATERNO] . ' '
+            . @$lead[self::APELLIDO_MATERNO]);
     }
 
     public static function save($data)
@@ -158,6 +188,24 @@ class Lead
             $key = isset(self::$alias[$key]) ? self::$alias[$key] : $key;
             $data[$key] = implode(';', $value);
         }
+        return $data;
+    }
+
+    public static function fromCC($input)
+    {
+        $data = [];
+        foreach ($input as $key => $value) {
+            $key = isset(self::$aliasCC[$key]) ? self::$aliasCC[$key] : $key;
+            $data[$key] = $value;
+        }
+        $data['crm_fullname_c'] = preg_replace('/\s+/', ' ', @$data[self::PRIMER_NOMBRE] . ' '
+            . @$data[self::SEGUNDO_NOMBRE] . ' '
+            . @$data[self::APELLIDO_PATERNO] . ' '
+            . @$data[self::APELLIDO_MATERNO]);
+        $data[self::FIRST_NAME] = preg_replace('/\s+/', ' ', @$data[self::PRIMER_NOMBRE] . ' '
+            . @$data[self::SEGUNDO_NOMBRE]);
+        $data[self::LAST_NAME] = preg_replace('/\s+/', ' ', @$data[self::APELLIDO_PATERNO] . ' '
+            . @$data[self::APELLIDO_MATERNO]);
         return $data;
     }
 }

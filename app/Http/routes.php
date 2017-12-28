@@ -17,6 +17,7 @@ Route::get('/', function () {
 
 Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\Http\Request $request) {
     $all = $request->all();
+    error_log(json_encode($all));
     $data_json = json_decode($all['data_json']);
     error_log(json_encode([$service, $code, $all]));
     error_log(json_encode($data_json));
@@ -24,30 +25,9 @@ Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\
         return;
     }
     $lead = \App\Lead::fromUnbounce($data_json);
+    \App\Lead::completeLeadNames($lead);
     $lead['crm_landing_code_c'] = $code;
     $results = \App\Lead::save($lead);
-
-    error_log(print_r($results, true));
-});
-
-Route::get('/landing/{service}/{code}', function ($service, $code, \Illuminate\Http\Request $request) {
-    error_log(json_encode([$service, $code, $request->all()]));
-
-    $sugar = new \Asakusuma\SugarWrapper\Rest;
-
-    $sugar->setUrl(env('SUGAR_URL').'/service/v2/rest.php');
-    $sugar->setUsername(env('SUGAR_USER'));
-    $sugar->setPassword(env('SUGAR_PASSWORD'));
-
-    $sugar->connect();
-
-    $results = $sugar->set("Leads", [
-        'crm_fullname_c' => $request->all('nombre_y_apellido'),
-        'crm_variant_c' => $request->input('variant'),
-        'crm_phone_c' => $request->input('telefono'),
-        'crm_city_c' => $request->input('ciudad'),
-        'crm_landing_code_c' => $code,
-    ]);
 
     error_log(print_r($results, true));
 });
@@ -60,6 +40,7 @@ Route::post('/lead/{id}', function ($id, \Illuminate\Http\Request $request) {
             $data[$key] = $value;
         }
 
+        \App\Lead::completeLeadNames($data);
         $results = \App\Lead::update($id, $data);
 
         error_log(print_r($results, true));
@@ -102,6 +83,38 @@ Route::get('/lead/find', function (\Illuminate\Http\Request $request) {
     $leads = \App\Lead::findFromLanding($request->input('query'));
 
     return ["success" => true, "data" => $leads];
+});
+
+Route::get('/rest/documentos', function () {
+    $res = (new \App\FRest\Documentos())->call();
+    return json_encode($res);
+});
+
+Route::get('/rest/localidades', function () {
+    return (new \App\FRest\Localidades())->call();
+});
+
+Route::get('/rest/usuarios/{agencia}/{producto}', function ($agencia, $producto) {
+    return (new \App\FRest\Usuarios($agencia, $producto))->call();
+});
+
+Route::get('/rest/agencias', function () {
+    return (new \App\FRest\Agencias())->call();
+});
+
+Route::get('/rest/productos', function () {
+    return (new \App\FRest\Productos())->call();
+});
+
+Route::post('/rest/adicionarCliente', function (\Illuminate\Http\Request $request) {
+    //$json -> sci
+    $json = json_decode($request->input("json"));
+    //$json1 -> sugar
+    $json1 = json_decode($request->input("json"));
+        $json1->crm_enviado_a_sci_c = 1;
+        $results = \App\Lead::save(App\Lead::fromCC($json1));
+    $json->cc_nro_oportunidad = $results['id'];
+    return response()->json((new \App\FRest\AdicionaCliente($json))->call());
 });
 
 /*
