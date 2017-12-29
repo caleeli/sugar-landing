@@ -94,8 +94,8 @@ class Lead
 
     private static function updateStates($data)
     {
-        if (isset($data['sci_estado_credito_char_c'])) {
-            switch($data['sci_estado_credito_char_c']) {
+        if (isset($data['sci_subestado_credito_char_c'])) {
+            switch($data['sci_subestado_credito_char_c']) {
                 case 'S':
                 case 'G':
                 case 'C':
@@ -162,6 +162,9 @@ class Lead
 
     public static function completeLeadNames(&$lead)
     {
+        if (!isset($lead[self::FULLNAME])) {
+            return;
+        }
         $fullname = preg_replace('/\s+/', ' ', $lead[self::FULLNAME]);
         $names = explode(' ', $fullname);
         $count = count($names);
