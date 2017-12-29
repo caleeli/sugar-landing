@@ -88,7 +88,32 @@ class Lead
             throw new Exception("Lead not found $id");
         }
         $data['id'] = $id;
+        $data = static::updateStates($data);
         return $sugar->set("Leads", $data);
+    }
+
+    private static function updateStates($data)
+    {
+        if (isset($data['sci_estado_credito_char_c'])) {
+            switch($data['sci_estado_credito_char_c']) {
+                case 'S':
+                case 'G':
+                case 'C':
+                case 'O':
+                case 'O':
+                case 'T':
+                case 'A':
+                    $data['status'] = 'In Process';
+                    break;
+                case 'R':
+                    $data['status'] = 'NoCalifica';
+                    break;
+                case 'X':
+                    $data['status'] = 'Anulado';
+                    break;
+            }
+        }
+        return $data;
     }
 
     public static function findFromLanding($query)

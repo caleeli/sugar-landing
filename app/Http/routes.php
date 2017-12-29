@@ -112,6 +112,7 @@ Route::post('/rest/adicionarCliente', function (\Illuminate\Http\Request $reques
     //$json1 -> sugar
     $json1 = json_decode($request->input("json"));
         $json1->crm_enviado_a_sci_c = 1;
+        $json1->status = 'Assigned';
         $results = \App\Lead::save(App\Lead::fromCC($json1));
     $json->cc_nro_oportunidad = $results['id'];
     return response()->json((new \App\FRest\AdicionaCliente($json))->call());
