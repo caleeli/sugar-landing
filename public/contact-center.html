@@ -258,14 +258,14 @@
                                             </div>
 											
 											<div class="lead_form text-right tooltip-demo">
-                                                <a href="javascript:void(0)" v-on:click="cancelar" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Enviar"><i class="fa fa-backward"></i> Atrás</a>
+                                                <a href="javascript:void(0)" v-on:click="cancelar" class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Enviar"><i class="fa fa-backward"></i> Volver al listado</a>
                                                 <div class="btn-group">
-                                                    <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        Action <span class="caret"></span>
+                                                    <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        Cambiar estado <span class="caret"></span>
                                                     </button>
                                                     <ul class="dropdown-menu">
-                                                        <li><a href="#">Desistio</a></li>
-                                                        <li><a href="#">No Confirmado</a></li>
+                                                        <li><a href="javascript:void(0)" v-on:click="cambiarEstado('NoDesea')">NO DESEA</a></li>
+                                                        <li><a href="javascript:void(0)" v-on:click="cambiarEstado('Inubicable')">INUBICABLE</a></li>
                                                     </ul>
                                                 </div>
 												<button class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Enviar"><i class="fa fa-forward"></i> Enviar</button>
@@ -634,6 +634,27 @@ $(document).ready(function () {
                     error: function () {
                         callback();
                         self.errorMessage = 'La solicitud fue enviada correctamente, pero no se pudieron quitar los duplicados.';
+                    }
+                });
+            },
+            cambiarEstado : function (estado) {
+                var self = this;
+                $.ajax({
+                    method: 'post',
+                    url: window.API_BASE+'/lead/'+self.lead.id,
+                    data: {
+                        "status": estado
+                    },
+                    dataType: 'json',
+                    success: function (res) {
+                        self.quitarDuplicados(function () {
+                            self.buscarLead(function () {
+                                self.leadIsOpen = false;
+                            });
+                        });
+                    },
+                    error: function () {
+                        self.errorMessage = 'No se pudo cambiar estado a "'+estado+'"';
                     }
                 });
             },
