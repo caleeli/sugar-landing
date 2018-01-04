@@ -122,7 +122,7 @@ Route::post('/rest/adicionarCliente', function (\Illuminate\Http\Request $reques
     return response()->json((new \App\FRest\AdicionaCliente($json))->call());
 });
 
-Route::post('/rest/duplicated', function (\Illuminate\Http\Request $request) {
+Route::get('/lead/{id}/duplicados', function ($id, \Illuminate\Http\Request $request) {
     if (empty($request->input('phone'))) {
         return ["success" => false, "data" => []];
     }
@@ -130,10 +130,21 @@ Route::post('/rest/duplicated', function (\Illuminate\Http\Request $request) {
         '',
         'New',
         0,
-        $request->input('phone')
+        $request->input('phone'),
+        $id
     );
 
     return ["success" => true, "data" => $leads];
+});
+Route::post('/lead/{id}/quitarDuplicados', function ($id, \Illuminate\Http\Request $request) {
+    $json = json_decode($request->input("json"));
+    foreach($json->duplicados as $dupId) {
+        if (empty($dupId) || $dupId == $id) continue;
+        $data[\App\Lead::STATUS] = 'Duplicado';
+        \App\Lead::update($dupId, $data);
+    }
+
+    return ["success" => true];
 });
 
 /*

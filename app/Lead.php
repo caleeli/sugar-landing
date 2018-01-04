@@ -129,18 +129,20 @@ class Lead
      * @param type $offset Inicia en 0
      * @return type
      */
-    public static function findFromLanding($query, $status, $offset, $phone=null)
+    public static function findFromLanding($query, $status, $offset, $phone=null, $notLike=null)
     {
         $query = self::secure($query);
         $status = self::secure($status);
         $offset = self::secure($offset);
         $phone = self::secure($phone);
+        //no funciona filtrar el leed en sugar
+        //$notLike = self::secure($notLike);
         $like = '%' . preg_replace('/\s+|\'"/', '%', $query) . '%';
         $sugar = Sugar::getConnection();
         $where = self::STATUS . ' like "'.$status.'" and (' . self::FULLNAME . " like '$like' OR "
             . self::PHONE . " like '$like' OR "
             . self::CITY . " like '$like') and " . self::PHONE . " is not null"
-            . (!empty($phone) ? self::PHONE . "='$phone'" :'');
+            . (!empty($phone) ? ' and ' . self::PHONE . "='$phone'" :'');
         return (self::completeFromLanding($sugar->get(
                     "Leads",
                     [
