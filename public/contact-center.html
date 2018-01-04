@@ -642,9 +642,9 @@ $(document).ready(function () {
                 $.ajax({
                     method: 'post',
                     url: window.API_BASE+'/lead/'+self.lead.id,
-                    data: {
+                    data: JSON.stringify({
                         "status": estado
-                    },
+                    }),
                     dataType: 'json',
                     success: function (res) {
                         self.quitarDuplicados(function () {
