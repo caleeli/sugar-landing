@@ -14,6 +14,7 @@ class Agencias extends FRest
     protected $sample = [
         [
             "su_nombre"   => "COCHABAMBA",
+            "su_sucursal"   => 3,
             "su_oficinas" => [
                 [
                     "of_nombre"  => "Oficina Central Sucursal",

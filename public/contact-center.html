@@ -120,7 +120,10 @@
                                         <tfoot>
                                             <tr>
                                                 <td colspan="7">
-                                                    <ul class="pagination pull-right"></ul>
+                                                    <ul class="pagination pull-right">
+                                                        <li><a href="javascript:void(0)" v-on:click="prevPage">‹</a></li>
+                                                        <li><a href="javascript:void(0)" v-on:click="nextPage">›</a></li>
+                                                    </ul>
                                                 </td>
                                             </tr>
                                         </tfoot>
@@ -138,7 +141,7 @@
                                     <h5>Lead</h5>
                                 </div>
                                 <div class="ibox-content">
-                                    <form class="form-horizontal">
+                                    <form class="form-horizontal" v-on:submit.prevent="enviar" >
                                         <fieldset>
                                             <div class="form-group">
                                                 <label class="col-lg-2 control-label">Teléfono</label>
@@ -147,7 +150,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label class="col-lg-2 control-label">Nombre</label>
+                                                <label class="col-lg-2 required control-label">Nombre</label>
                                                 <div class="col-lg-10">
                                                     <input type="text" v-model="lead.crm_primer_nombre_c" class="form-control" placeholder="">
                                                 </div>
@@ -159,13 +162,13 @@
                                                 </div>
                                             </div>     
 										  <div class="form-group">
-                                                <label class="col-lg-2 control-label">Apellido paterno</label>
+                                                <label class="col-lg-2 required control-label">Apellido paterno</label>
                                                 <div class="col-lg-10">
                                                     <input type="text" v-model="lead.crm_apellido_paterno_c" class="form-control" placeholder="">
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label class="col-lg-2 control-label">Apellido materno</label>
+                                                <label class="col-lg-2 required control-label">Apellido materno</label>
                                                 <div class="col-lg-10">
                                                     <input type="text" v-model="lead.crm_apellido_materno_c" class="form-control" placeholder="">
                                                 </div>
@@ -188,7 +191,7 @@
                                             <div class="form-group">
                                                 <label class="col-lg-2 control-label">Tipo documento</label>
                                                 <div class="col-lg-10">
-                                                    <select class="form-control" v-model="lead.crm_tipo_documento_c">
+                                                    <select class="form-control" required v-model="lead.crm_tipo_documento_c">
                                                         <option v-for="row in documentos" v-bind:value="row.tdoc_id">{{row.descripcion}}</option>
                                                     </select>
                                                 </div>
@@ -196,14 +199,14 @@
 											<div class="form-group">
                                                 <label class="col-lg-2 control-label">Nro. Documento</label>
                                                 <div class="col-lg-10">
-                                                    <input type="number" v-model="lead.crm_nro_documento_c" class="form-control" placeholder="">
+                                                    <input type="number" required v-model="lead.crm_nro_documento_c" class="form-control" placeholder="">
                                                 </div>
                                             </div>
 											
 											<div class="form-group">
                                                 <label class="col-lg-2 control-label">Extensión</label>
                                                 <div class="col-lg-10">
-                                                    <select class="form-control" v-model="lead.crm_extension_c">
+                                                    <select class="form-control" required v-model="lead.crm_extension_c">
                                                         <option v-for="row in extensiones" v-bind:styl1e="{display:row.tdoc_id==lead.crm_tipo_documento_c?'':'none'}" v-bind:value="row.extension">{{row.descripcion}}</option>
                                                     </select>
                                                 </div>
@@ -212,7 +215,7 @@
 											<div class="form-group">
                                                 <label class="col-lg-2 control-label">Producto</label>
                                                 <div class="col-lg-10">
-                                                    <select class="form-control" v-model="lead.cc_producto_c" v-on:change="cargarUsuarios">
+                                                    <select class="form-control" required v-model="lead.cc_producto_c" v-on:change="cargarUsuarios">
                                                         <option v-for="row in productos" v-bind:value="row.co_correl">{{row.co_nombre}}</option>
                                                     </select>
                                                 </div>
@@ -221,7 +224,7 @@
 											<div class="form-group">
                                                 <label class="col-lg-2 control-label">Ciudad</label>
                                                 <div class="col-lg-10">
-                                                    <select class="form-control" v-model="lead.cc_ciudad_c" v-on:change="cargarOficinas">
+                                                    <select class="form-control" required v-model="lead.cc_ciudad_c" v-on:change="cargarOficinas">
                                                         <option v-for="row in agencias" v-bind:value="row.su_sucursal">{{row.su_nombre}}</option>
                                                     </select>
                                                 </div>
@@ -230,7 +233,7 @@
 											<div class="form-group">
                                                 <label class="col-lg-2 control-label">Agencia</label>
                                                 <div class="col-lg-10">
-                                                    <select class="form-control" v-model="lead.cc_agencia_c" v-on:change="cargarUsuarios">
+                                                    <select class="form-control" required v-model="lead.cc_agencia_c" v-on:change="cargarUsuarios">
                                                         <option v-for="row in oficinas" v-bind:value="row.of_oficina">{{row.of_nombre}}</option>
                                                     </select>
                                                 </div>
@@ -240,7 +243,7 @@
 											<div class="form-group">
                                                 <label class="col-lg-2 control-label">Funcionario</label>
                                                 <div class="col-lg-10">
-                                                    <select class="form-control" v-model="lead.cc_usuario_c">
+                                                    <select class="form-control" required v-model="lead.cc_usuario_c">
                                                         <option v-for="row in usuarios" v-bind:value="row.us_usuario">{{row.us_nombre+' '+row.us_paterno}}</option>
                                                     </select>
                                                 </div>
@@ -265,7 +268,7 @@
                                                         <li><a href="#">No Confirmado</a></li>
                                                     </ul>
                                                 </div>
-												<a href="javascript:void(0)" v-on:click="enviar" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Enviar"><i class="fa fa-forward"></i> Enviar</a>
+												<button class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Enviar"><i class="fa fa-forward"></i> Enviar</button>
 											</div>
                                         </fieldset>
                                     </form>
@@ -311,14 +314,14 @@
         <script>
 $(document).ready(function () {
     window.API_BASE = 'http://192.168.200.191:8080';
-    //window.API_BASE = 'http://localhost:6060';
-    $('.footable').footable();
+    window.API_BASE = '';
     var app = new Vue({
         el: '#wrapper',
         data: function () {
             var self = this;
             return {
                 leads: [],
+                offset: 0,
                 telefono: '',
                 nombre: '',
                 apellido: '',
@@ -350,12 +353,12 @@ $(document).ready(function () {
             },
         },
         methods: {
-            buscarLead: function (callback) {
+            buscarLead : function (callback) {
                 var self = this;
-                var query = self.telefono + ' ' + self.nombre + ' ' + self.apellido;
+                var query = '';//self.telefono + ' ' + self.nombre + ' ' + self.apellido;
                 $.ajax({
                     method: 'get',
-                    url: window.API_BASE+'/lead/find?query=' + encodeURIComponent(query),
+                    url: window.API_BASE+'/lead/find?query=' + encodeURIComponent(query) + '&status=New&offset='+self.offset,
                     dataType: 'json',
                     success: function (res) {
                         self.leads.splice(0);
@@ -471,24 +474,6 @@ $(document).ready(function () {
                     }
                 });
             },
-            cargarProductos: function () {
-                /*var self = this;
-                $.ajax({
-                    method: 'get',
-                    url: window.API_BASE+'/rest/productos',
-                    dataType: 'json',
-                    success: function (res) {
-                        self.productos.splice(0);
-                        res.forEach(function (row) {
-                            self.productos.push(row);
-                        });
-                    }
-                }).done(function () {
-                    if (typeof callback === 'function') {
-                        callback();
-                    }
-                });*/
-            },
             enviar: function () {
                 var self = this;
                 function nvl(a){
@@ -508,7 +493,17 @@ $(document).ready(function () {
                     data: {"json":JSON.stringify({
                         "cc_cliente_CRM":0,
                         "cc_nro_oportunidad":self.lead.id,
-                        "cc_nombre_completo":nvl(self.lead.crm_fullname_c),
+                        "cc_nombre_completo":nvl(
+                            [
+                                self.lead.crm_primer_nombre_c,
+                                self.lead.crm_segundo_nombre_c,
+                                self.lead.crm_apellido_paterno_c,
+                                self.lead.crm_apellido_materno_c,
+                                self.lead.crm_apellido_casada_c
+                                    ? 'de ' + self.lead.crm_apellido_casada_c
+                                    : '',
+                            ].join(" ").replace(/\s+/g," ")
+                        ),
                         "cc_ciudad":nvl(self.lead.cc_ciudad_c),
                         "cc_email":nvl(self.lead.email1),
                         "cc_agencia":nvl(self.lead.cc_agencia_c),
@@ -530,10 +525,11 @@ $(document).ready(function () {
                     })},
                     success: function (res) {
                         if (res==='success') {
-                            self.leadIsOpen = false;
+                            self.buscarLead(function () {
+                                self.leadIsOpen = false;
+                            });
                             return;
                         }
-                        console.log(res);
                         alert(res);
                     },
                     error: function (res) {
@@ -548,7 +544,26 @@ $(document).ready(function () {
             cancelar: function () {
                 var self = this;
                 self.leadIsOpen = false;
-            }
+            },
+            prevPage : function () {
+                var self = this;
+                if (self.offset===0) return;
+                self.offset-=25;
+                self.buscarLead(function () {
+                    if (self.leads.length===0) {
+                        self.prevPage();
+                    }
+                });
+            },
+            nextPage : function () {
+                var self = this;
+                self.offset+=25;
+                self.buscarLead(function () {
+                    if (self.leads.length===0) {
+                        self.prevPage();
+                    }
+                });
+            },
         },
         mounted: function () {
             var self = this;
@@ -556,7 +571,6 @@ $(document).ready(function () {
             self.cargarLocalidades();
             self.cargarUsuarios();
             self.cargarAgencias();
-            //self.cargarProductos();
             self.buscarLead();
         }
     });

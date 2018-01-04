@@ -17,6 +17,7 @@ class AdicionaCliente extends FRest
     //@todo: Agregar el texto del producto: cc_producto_descripcion, cc_producto_id
     //@todo: Agregar la glosa mensaje: cc_mensaje
     protected $body = [];
+    protected $sample = 'success';
 
     public function __construct($body)
     {

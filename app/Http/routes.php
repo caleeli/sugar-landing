@@ -80,7 +80,11 @@ Route::post('/lead/agenda/{codigo}', function ($codigo, \Illuminate\Http\Request
 
 Route::get('/lead/find', function (\Illuminate\Http\Request $request) {
 
-    $leads = \App\Lead::findFromLanding($request->input('query'));
+    $leads = \App\Lead::findFromLanding(
+        $request->input('query'),
+        $request->input('status', 'New'),
+        $request->input('offset', 0)
+    );
 
     return ["success" => true, "data" => $leads];
 });
@@ -116,6 +120,20 @@ Route::post('/rest/adicionarCliente', function (\Illuminate\Http\Request $reques
         $results = \App\Lead::save(App\Lead::fromCC($json1));
     $json->cc_nro_oportunidad = $results['id'];
     return response()->json((new \App\FRest\AdicionaCliente($json))->call());
+});
+
+Route::post('/rest/duplicated', function (\Illuminate\Http\Request $request) {
+    if (empty($request->input('phone'))) {
+        return ["success" => false, "data" => []];
+    }
+    $leads = \App\Lead::findFromLanding(
+        '',
+        'New',
+        0,
+        $request->input('phone')
+    );
+
+    return ["success" => true, "data" => $leads];
 });
 
 /*

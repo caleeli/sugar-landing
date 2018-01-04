@@ -31,6 +31,7 @@ class Lead
     const CC_CIUDAD = 'cc_ciudad_c';
     const CC_AGENCIA = 'cc_agencia_c';
     const CC_USUARIO = 'cc_usuario_c';
+    const STATUS = 'status';
 
     private static $alias = [
         'variant' => 'crm_variant_c',
@@ -116,14 +117,31 @@ class Lead
         return $data;
     }
 
-    public static function findFromLanding($query)
+    private static function secure($input)
     {
+        return str_replace(['"', "'"], '', $input);
+    }
+
+    /**
+     *
+     * @param type $query Texto a buscar
+     * @param type $status New|Assigned|In Process|Converted|NoDesea|NoCalifica|Inubicable|Anulado|Dead|Duplicado|Recycled
+     * @param type $offset Inicia en 0
+     * @return type
+     */
+    public static function findFromLanding($query, $status, $offset, $phone=null)
+    {
+        $query = self::secure($query);
+        $status = self::secure($status);
+        $offset = self::secure($offset);
+        $phone = self::secure($phone);
         $like = '%' . preg_replace('/\s+|\'"/', '%', $query) . '%';
         $sugar = Sugar::getConnection();
-        $where = self::FULLNAME . " like '$like' OR "
+        $where = self::STATUS . ' like "'.$status.'" and (' . self::FULLNAME . " like '$like' OR "
             . self::PHONE . " like '$like' OR "
-            . self::CITY . " like '$like'";
-        return self::completeFromLanding($sugar->get(
+            . self::CITY . " like '$like') and " . self::PHONE . " is not null"
+            . (!empty($phone) ? self::PHONE . "='$phone'" :'');
+        return (self::completeFromLanding($sugar->get(
                     "Leads",
                     [
                     'id',
@@ -144,10 +162,27 @@ class Lead
                     self::CC_CIUDAD,
                     self::CC_AGENCIA,
                     self::CC_USUARIO,
+                    self::STATUS,
                     ], [
-                    'where' => $where
+                        'where' => $where,
+                        'offset' => $offset,
+                        'limit' => 20,
                     ]
-        ));
+        )));
+    }
+
+    private static function groupByPhone($leads)
+    {
+        for ($i = 0, $l = count($leads); $i < $l;$i++) {
+            for ($j = $i + 1; $j < $l; $j++) {
+                if ($leads[$i][self::PHONE] === $leads[$j][self::PHONE]) {
+                    $similar = array_splice($leads, $j, 1);
+                    array_splice($leads, $i + 1, 0, $similar);
+                    $i++;
+                }
+            }
+        }
+        return $leads;
     }
 
     private static function completeFromLanding($leads)
@@ -229,7 +264,11 @@ class Lead
         $data['crm_fullname_c'] = preg_replace('/\s+/', ' ', @$data[self::PRIMER_NOMBRE] . ' '
             . @$data[self::SEGUNDO_NOMBRE] . ' '
             . @$data[self::APELLIDO_PATERNO] . ' '
-            . @$data[self::APELLIDO_MATERNO]);
+            . @$data[self::APELLIDO_MATERNO] . ' '
+            . empty($data[self::APELLIDO_CASADA])
+                ? ''
+                : 'de ' . $data[self::APELLIDO_CASADA]
+        );
         $data[self::FIRST_NAME] = preg_replace('/\s+/', ' ', @$data[self::PRIMER_NOMBRE] . ' '
             . @$data[self::SEGUNDO_NOMBRE]);
         $data[self::LAST_NAME] = preg_replace('/\s+/', ' ', @$data[self::APELLIDO_PATERNO] . ' '
