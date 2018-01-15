@@ -149,7 +149,7 @@
                                             <div class="form-group">
                                                 <div class="col-xs-4 col-md-4">
                                                     <label class="required control-label">Teléfono *</label>
-                                                    <input type="number" required v-model="lead.phone_mobile" class="form-control" placeholder="">
+                                                    <input id="input_telefono" type="number" required v-model="lead.phone_mobile" class="form-control" placeholder="">
                                                 </div>
                                                 <div class="col-xs-4 col-md-4">
                                                     <label class="required control-label">Nombre *</label>
@@ -412,6 +412,7 @@ $(document).ready(function () {
                 }
                 self.lead.priorizar = false;
                 self.buscarDuplicados(lead.id, lead.phone_mobile);
+                setTimeout(function (){$("#input_telefono").focus();}, 100);
             },
             buscarDuplicados : function (id, phone) {
                 var self = this;
