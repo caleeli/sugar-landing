@@ -18,9 +18,15 @@
         <link href="css/style.css" rel="stylesheet">
 
         <link href="css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+        <link href="bower_components/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
         <style>
             #page-wrapper {
                 margin: 0 0 0 0px;
+            }
+        </style>
+        <style>
+            .required {
+                color: lightcoral;
             }
         </style>
 
@@ -32,14 +38,14 @@
 
 
             <div id="page-wrapper" class="gray-bg">
-                <div class="row wrapper border-bottom white-bg page-heading">
+                <!-- div class="row wrapper border-bottom white-bg page-heading">
                     <div class="col-lg-10">
                         <h2>Contact Center</h2>
                     </div>
                     <div class="col-lg-2">
 
                     </div>
-                </div>
+                </div -->
 
                 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
 
@@ -137,123 +143,98 @@
                     <div class="row" v-if="leadIsOpen">
                         <div class="col-lg-12">
                             <div class="ibox">
-                                <div class="ibox-title">
-                                    <h5>Lead</h5>
-                                </div>
                                 <div class="ibox-content">
                                     <form class="form-horizontal" v-on:submit.prevent="enviar" >
                                         <fieldset>
                                             <div class="form-group">
-                                                <label class="col-lg-2 control-label">Teléfono</label>
-                                                <div class="col-lg-10">
-                                                    <input type="text" v-model="lead.phone_mobile" class="form-control" placeholder="">
+                                                <div class="col-xs-4 col-md-4">
+                                                    <label class="required control-label">Teléfono *</label>
+                                                    <input type="number" required v-model="lead.phone_mobile" class="form-control" placeholder="">
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="col-lg-2 required control-label">Nombre</label>
-                                                <div class="col-lg-10">
-                                                    <input type="text" v-model="lead.crm_primer_nombre_c" class="form-control" placeholder="">
+                                                <div class="col-xs-4 col-md-4">
+                                                    <label class="required control-label">Nombre *</label>
+                                                    <input type="text" required v-model="lead.crm_primer_nombre_c" class="form-control" placeholder="">
                                                 </div>
-                                            </div>
-											<div class="form-group">
-                                                <label class="col-lg-2 control-label">Segundo Nombre</label>
-                                                <div class="col-lg-10">
+                                                <div class="col-xs-4 col-md-4">
+                                                    <label class="control-label">Segundo Nombre</label>
                                                     <input type="text" v-model="lead.crm_segundo_nombre_c" class="form-control" placeholder="">
                                                 </div>
-                                            </div>     
-										  <div class="form-group">
-                                                <label class="col-lg-2 required control-label">Apellido paterno</label>
-                                                <div class="col-lg-10">
-                                                    <input type="text" v-model="lead.crm_apellido_paterno_c" class="form-control" placeholder="">
+                                                <div class="col-xs-4 col-md-4">
+                                                    <label class="required control-label">Apellido paterno *</label>
+                                                    <input type="text" required v-model="lead.crm_apellido_paterno_c" class="form-control" placeholder="">
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="col-lg-2 required control-label">Apellido materno</label>
-                                                <div class="col-lg-10">
-                                                    <input type="text" v-model="lead.crm_apellido_materno_c" class="form-control" placeholder="">
+                                                <div class="col-xs-4 col-md-4">
+                                                    <label class="required control-label">Apellido materno *</label>
+                                                    <input type="text" required v-model="lead.crm_apellido_materno_c" class="form-control" placeholder="">
                                                 </div>
-                                            </div>
-											
-											<div class="form-group">
-                                                <label class="col-lg-2 control-label">Apellido casada</label>
-                                                <div class="col-lg-10">
+                                                <div class="col-xs-4 col-md-4">
+                                                    <label class="control-label">Apellido casada</label>
                                                     <input type="text" v-model="lead.crm_apellido_casada_c" class="form-control" placeholder="">
                                                 </div>
-                                            </div>
-											
-                                            <div class="form-group">
-                                                <label class="col-lg-2 control-label">E-mail</label>
-                                                <div class="col-lg-10">
+                                                <div class="col-xs-3 col-md-3">
+                                                    <label class="control-label">E-mail</label>
                                                     <input type="email" v-model="lead.email1" class="form-control" placeholder="">
                                                 </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="col-lg-2 control-label">Tipo documento</label>
-                                                <div class="col-lg-10">
-                                                    <select class="form-control" required v-model="lead.crm_tipo_documento_c">
+                                                <div class="col-xs-3 col-md-3">
+                                                    <label class="control-label">Tipo documento</label>
+                                                    <select class="form-control" v-model="lead.crm_tipo_documento_c">
                                                         <option v-for="row in documentos" v-bind:value="row.tdoc_id">{{row.descripcion}}</option>
                                                     </select>
                                                 </div>
-                                            </div>
-											<div class="form-group">
-                                                <label class="col-lg-2 control-label">Nro. Documento</label>
-                                                <div class="col-lg-10">
-                                                    <input type="number" required v-model="lead.crm_nro_documento_c" class="form-control" placeholder="">
+                                                <div class="col-xs-3 col-md-3">
+                                                    <label class="control-label">Nro. Documento</label>
+                                                    <input type="number" v-model="lead.crm_nro_documento_c" class="form-control" placeholder="">
                                                 </div>
-                                            </div>
-											
-											<div class="form-group">
-                                                <label class="col-lg-2 control-label">Extensión</label>
-                                                <div class="col-lg-10">
-                                                    <select class="form-control" required v-model="lead.crm_extension_c">
+                                                <div class="col-xs-3 col-md-3">
+                                                    <label class="control-label">Extensión</label>
+                                                    <select class="form-control" v-model="lead.crm_extension_c">
                                                         <option v-for="row in extensiones" v-bind:styl1e="{display:row.tdoc_id==lead.crm_tipo_documento_c?'':'none'}" v-bind:value="row.extension">{{row.descripcion}}</option>
                                                     </select>
                                                 </div>
-                                            </div>
-											
-											<div class="form-group">
-                                                <label class="col-lg-2 control-label">Producto</label>
-                                                <div class="col-lg-10">
+                                                <div class="col-xs-3 col-md-3">
+                                                    <label class="required control-label">Producto *</label>
                                                     <select class="form-control" required v-model="lead.cc_producto_c" v-on:change="cargarUsuarios">
                                                         <option v-for="row in productos" v-bind:value="row.co_correl">{{row.co_nombre}}</option>
                                                     </select>
                                                 </div>
-                                            </div>
-											
-											<div class="form-group">
-                                                <label class="col-lg-2 control-label">Ciudad</label>
-                                                <div class="col-lg-10">
+                                                <div class="col-xs-3 col-md-3">
+                                                    <label class="required control-label">Departamento *</label>
                                                     <select class="form-control" required v-model="lead.cc_ciudad_c" v-on:change="cargarOficinas">
                                                         <option v-for="row in agencias" v-bind:value="row.su_sucursal">{{row.su_nombre}}</option>
                                                     </select>
                                                 </div>
-                                            </div>
-											
-											<div class="form-group">
-                                                <label class="col-lg-2 control-label">Agencia</label>
-                                                <div class="col-lg-10">
+                                                <div class="col-xs-3 col-md-3">
+                                                    <label class="required control-label">Agencia *</label>
                                                     <select class="form-control" required v-model="lead.cc_agencia_c" v-on:change="cargarUsuarios">
                                                         <option v-for="row in oficinas" v-bind:value="row.of_oficina">{{row.of_nombre}}</option>
                                                     </select>
                                                 </div>
-                                            </div>
-											
-											
-											<div class="form-group">
-                                                <label class="col-lg-2 control-label">Funcionario</label>
-                                                <div class="col-lg-10">
+                                                <div class="col-xs-3 col-md-3">
+                                                    <label class="required control-label">Funcionario *</label>
                                                     <select class="form-control" required v-model="lead.cc_usuario_c">
                                                         <option v-for="row in usuarios" v-bind:value="row.us_usuario">{{row.us_nombre+' '+row.us_paterno}}</option>
                                                     </select>
                                                 </div>
-                                            </div>
-											
-											<div class="form-group">
-                                                <label class="col-lg-2 control-label">Mensaje</label>
-                                                <div class="col-lg-10">
+                                                <div class="col-md-6" style="display:none;">
+                                                    <label class="control-label">Mensaje</label>
                                                     <textarea class="form-control" v-model="lead.cc_mensaje_c">
                                                     </textarea>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="control-label">¿Priorizar?</label>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <div v-on:click="lead.priorizar=!lead.priorizar" v-bind:class="{toggle:1, btn:1, 'btn-primary': lead.priorizar, 'btn-default': !lead.priorizar, off: !lead.priorizar}" style="width: 128px; height: 34px;">
+                                                                <input data-toggle="toggle" type="checkbox">
+                                                                <div class="toggle-group">
+                                                                    <label class="btn btn-primary toggle-on">Priorizar</label>
+                                                                    <label class="btn btn-default active toggle-off">No priorizar</label>
+                                                                    <span class="toggle-handle btn btn-default"></span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             </div>
 											
@@ -272,13 +253,8 @@
 											</div>
                                         </fieldset>
                                     </form>
-                                </div>
-                            </div>
-                            <div class="ibox">
-                                <div class="ibox-title">
-                                    <h5>Duplicados</h5>
-                                </div>
-                                <div class="ibox-content">
+                                    <hr>
+                                    <h4>Duplicados</h4>
                                     <p>
                                         Los siguientes leads tienen el mismo número de teléfono, al <label class="label label-primary">enviar</label> la solicitud,
                                         <b>los marcados como duplicados se quitarán de la bandeja de pendientes</b>.
@@ -318,6 +294,7 @@
                                             </tr>
                                         </tbody>
                                     </table>
+
                                 </div>
                             </div>
                         </div>
@@ -347,6 +324,7 @@
         <script src="js/bootstrap.min.js"></script>
         <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
         <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+        <!-- script src="bower_components/bootstrap-toggle/js/bootstrap-toggle.min.js"></script -->
 
         <!-- Custom and plugin javascript -->
         <script src="js/inspinia.js"></script>
@@ -377,7 +355,9 @@ $(document).ready(function () {
                 nombre: '',
                 apellido: '',
                 leadIsOpen: false,
-                lead: {},
+                lead: {
+                    priorizar: true
+                },
                 documentos: [],
                 extensiones: [],
                 localidades: [],
@@ -430,6 +410,7 @@ $(document).ready(function () {
                 for(var a in lead) {
                     self.lead[a] = lead[a];
                 }
+                self.lead.priorizar = false;
                 self.buscarDuplicados(lead.id, lead.phone_mobile);
             },
             buscarDuplicados : function (id, phone) {
