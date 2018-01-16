@@ -586,9 +586,9 @@ $(document).ready(function () {
                         "cc_mensaje":nvl(self.lead.cc_mensaje_c),
                         "cc_estado":0,
                         "cc_subestado":0,
-                        //"cc_priorizar": self.lead.priorizar ? 1 : 0,
-                        //"cc_monto": nvl(self.lead.crm_amount_c),
-                        //"cc_actividad_cliente": nvl(self.lead.cc_actividad_c),
+                        "cc_priorizar": self.lead.priorizar ? 1 : 0,
+                        "cc_monto": nvl(self.lead.crm_amount_c),
+                        "cc_actividad_cliente": nvl(self.lead.cc_actividad_c),
                     })},
                     success: function (res) {
                         if (res==='success') {
