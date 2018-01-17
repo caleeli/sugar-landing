@@ -176,8 +176,8 @@
                                                     <input type="email" v-model="lead.email1" class="form-control" placeholder="">
                                                 </div>
                                                 <div class="col-xs-3 col-md-3">
-                                                    <label class="control-label">Tipo documento</label>
-                                                    <select class="form-control" v-model="lead.crm_tipo_documento_c">
+                                                    <label v-bind:class="{'control-label':1, required:!!lead.crm_nro_documento_c}">Tipo documento{{!!lead.crm_nro_documento_c?' *':''}}</label>
+                                                    <select class="form-control" v-bind:required="!!lead.crm_nro_documento_c" v-model="lead.crm_tipo_documento_c">
                                                         <option v-for="row in documentos" v-bind:value="row.tdoc_id">{{row.descripcion}}</option>
                                                     </select>
                                                 </div>
@@ -186,8 +186,8 @@
                                                     <input type="number" v-model="lead.crm_nro_documento_c" class="form-control" placeholder="">
                                                 </div>
                                                 <div class="col-xs-3 col-md-3">
-                                                    <label class="control-label">Extensión</label>
-                                                    <select class="form-control" v-model="lead.crm_extension_c">
+                                                    <label v-bind:class="{'control-label':1, required:!!lead.crm_nro_documento_c}">Extensión{{!!lead.crm_nro_documento_c?' *':''}}</label>
+                                                    <select class="form-control" v-bind:required="!!lead.crm_nro_documento_c" v-model="lead.crm_extension_c">
                                                         <option v-for="row in extensiones" v-bind:styl1e="{display:row.tdoc_id==lead.crm_tipo_documento_c?'':'none'}" v-bind:value="row.extension">{{row.descripcion}}</option>
                                                     </select>
                                                 </div>
@@ -253,7 +253,7 @@
 											<div class="lead_form text-right tooltip-demo">
                                                 <a href="javascript:void(0)" v-on:click="cancelar" class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Enviar"><i class="fa fa-backward"></i> Volver al listado</a>
                                                 <div class="btn-group">
-                                                    <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <button type="button" v-bind:disabled="runningRequest" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         Cambiar estado <span class="caret"></span>
                                                     </button>
                                                     <ul class="dropdown-menu">
@@ -261,7 +261,7 @@
                                                         <li><a href="javascript:void(0)" v-on:click="cambiarEstado('Inubicable')">INUBICABLE</a></li>
                                                     </ul>
                                                 </div>
-												<button class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Enviar"><i class="fa fa-forward"></i> Enviar</button>
+												<button class="btn btn-sm btn-primary" v-bind:disabled="runningRequest" data-toggle="tooltip" data-placement="top" title="Enviar"><i class="fa fa-forward"></i> Enviar</button>
 											</div>
                                         </fieldset>
                                     </form>
@@ -361,6 +361,7 @@ $(document).ready(function () {
             var self = this;
             return {
                 errorMessage: '',
+                runningRequest : false,
                 leads: [],
                 offset: 0,
                 telefono: '',
@@ -368,7 +369,8 @@ $(document).ready(function () {
                 apellido: '',
                 leadIsOpen: false,
                 lead: {
-                    priorizar: true
+                    priorizar: true,
+                    crm_nro_documento_c: '',
                 },
                 documentos: [],
                 extensiones: [],
@@ -418,6 +420,7 @@ $(document).ready(function () {
             },
             abrirLead: function (lead) {
                 var self = this;
+                self.runningRequest = false;
                 self.leadIsOpen = true;
                 for(var a in lead) {
                     self.lead[a] = lead[a];
@@ -540,6 +543,7 @@ $(document).ready(function () {
             },
             enviar: function () {
                 var self = this;
+                self.runningRequest = true;
                 function nvl(a){
                     return a ? a : '';
                 }
@@ -550,11 +554,7 @@ $(document).ready(function () {
                         prodDesc = p.co_nombre;
                     }
                 });
-                $.ajax({
-                    method: 'post',
-                    url: window.API_BASE+'/rest/adicionarCliente',
-                    dataType: 'json',
-                    data: {"json":JSON.stringify({
+                var clientRequest = {
                         "cc_cliente_CRM":0,
                         "cc_nro_oportunidad":self.lead.id,
                         "cc_nombre_completo":nvl(
@@ -577,8 +577,6 @@ $(document).ready(function () {
                         "cc_paterno":nvl(self.lead.crm_apellido_paterno_c),
                         "cc_materno":nvl(self.lead.crm_apellido_materno_c),
                         "cc_apellido_casada":nvl(self.lead.crm_apellido_casada_c),
-                        "cc_nro_documento":self.lead.crm_nro_documento_c*1,
-                        "cc_tipo_documento":nvl(self.lead.crm_tipo_documento_c),
                         "cc_telefono": nvl(self.lead.phone_mobile),
                         "cc_nro_producto": prod[1],
                         "cc_producto_descripcion":prodDesc,
@@ -589,11 +587,23 @@ $(document).ready(function () {
                         "cc_priorizar": self.lead.priorizar ? 1 : 0,
                         "cc_monto": nvl(self.lead.crm_amount_c),
                         "cc_actividad_cliente": nvl(self.lead.cc_actividad_c),
-                    })},
+                    };
+                    if (self.lead.crm_nro_documento_c*1 && nvl(self.lead.crm_tipo_documento_c)) {
+                        clientRequest["cc_nro_documento"] = self.lead.crm_nro_documento_c*1;
+                        clientRequest["cc_tipo_documento"]  = nvl(self.lead.crm_tipo_documento_c);
+                    } else if (self.lead.crm_nro_documento_c*1 && !nvl(self.lead.crm_tipo_documento_c)) {
+                        alert("Por favor escoja el tipo de documento");
+                    }
+                $.ajax({
+                    method: 'post',
+                    url: window.API_BASE+'/rest/adicionarCliente',
+                    dataType: 'json',
+                    data: {"json":JSON.stringify(clientRequest)},
                     success: function (res) {
                         if (res==='success') {
                             self.quitarDuplicados(function () {
                                 self.buscarLead(function () {
+                                    self.runningRequest = false;
                                     self.leadIsOpen = false;
                                 });
                             });
@@ -636,6 +646,7 @@ $(document).ready(function () {
             },
             cambiarEstado : function (estado) {
                 var self = this;
+                self.runningRequest = true;
                 $.ajax({
                     method: 'post',
                     url: window.API_BASE+'/lead/'+self.lead.id,
@@ -646,6 +657,7 @@ $(document).ready(function () {
                     success: function (res) {
                         self.quitarDuplicados(function () {
                             self.buscarLead(function () {
+                                self.runningRequest = false;
                                 self.leadIsOpen = false;
                             });
                         });

@@ -168,6 +168,8 @@ class Lead
                     self::CC_AGENCIA,
                     self::CC_USUARIO,
                     self::STATUS,
+                    self::FIRST_NAME,
+                    self::LAST_NAME,
                     ], [
                         'where' => $where,
                         'offset' => $offset,
@@ -203,7 +205,13 @@ class Lead
 
     public static function completeLeadNames(&$lead)
     {
-        if (!isset($lead[self::FULLNAME])) {
+        if (empty($lead[self::FULLNAME]) && !empty($lead[self::FIRST_NAME]) && !empty($lead[self::LAST_NAME])) {
+            $lead[self::FULLNAME] = $lead[self::FIRST_NAME] . ' ' . $lead[self::LAST_NAME];
+            $lead[self::PRIMER_NOMBRE] = $lead[self::FIRST_NAME];
+            $lead[self::APELLIDO_PATERNO] = $lead[self::LAST_NAME];
+            return;
+        }
+        if (empty($lead[self::FULLNAME])) {
             return;
         }
         $fullname = preg_replace('/\s+/', ' ', $lead[self::FULLNAME]);
