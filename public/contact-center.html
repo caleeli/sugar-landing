@@ -105,7 +105,7 @@
                                                     {{lead.phone_mobile}}
                                                 </td>
                                                 <td>
-                                                    {{lead.crm_fullname_c}}
+                                                    {{lead.crm_fullname_c.trim() ? lead.crm_fullname_c : lead.first_name + ' ' + lead.last_name}}
                                                 </td>
                                                 <td>
                                                     {{lead.crm_amount_c}}

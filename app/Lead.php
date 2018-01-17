@@ -172,6 +172,7 @@ class Lead
                         'where' => $where,
                         'offset' => $offset,
                         'limit' => 20,
+                        'order_by' => 'date_entered',
                     ]
         )));
     }
