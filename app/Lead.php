@@ -52,10 +52,11 @@ class Lead
         "cc_nro_documento"     => 'crm_nro_documento_c',
         "cc_tipo_documento"    => 'crm_tipo_documento_c',
         "cc_telefono"          => 'phone_mobile',
-        "cc_nro_producto"      => 'cc_producto_c',
+        "cc_nro_producto"      => 'cc_nro_producto_c',
         "cc_priorizar"         => 'cc_priorizar_c',
         "cc_monto"             => 'crm_amount_c',
         "cc_actividad_cliente" => 'cc_actividad_c',
+        "cc_producto_id"       => 'cc_producto_id_c',
     ];
 
     /**
