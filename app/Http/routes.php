@@ -16,11 +16,12 @@ Route::get('/', function () {
 });
 
 Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\Http\Request $request) {
+    sci_check_request($request);
     $all = $request->all();
-    error_log(json_encode($all));
+    //error_log(json_encode($all));
     $data_json = json_decode($all['data_json']);
-    error_log(json_encode([$service, $code, $all]));
-    error_log(json_encode($data_json));
+    //error_log(json_encode([$service, $code, $all]));
+    //error_log(json_encode($data_json));
     if ($service!='unbounce') {
         return;
     }
@@ -33,6 +34,7 @@ Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\
 });
 
 Route::post('/lead/{id}', function ($id, \Illuminate\Http\Request $request) {
+    sci_check_request($request);
     try {
         $json = $request->json();
         $data = [];
@@ -55,6 +57,7 @@ Route::post('/lead/{id}', function ($id, \Illuminate\Http\Request $request) {
 });
 
 Route::post('/lead/agenda/{codigo}', function ($codigo, \Illuminate\Http\Request $request) {
+    sci_check_request($request);
     try {
         $json = $request->json();
         $data = [];
@@ -79,7 +82,7 @@ Route::post('/lead/agenda/{codigo}', function ($codigo, \Illuminate\Http\Request
 });
 
 Route::get('/lead/find', function (\Illuminate\Http\Request $request) {
-
+    sci_check_request($request);
     $leads = \App\Lead::findFromLanding(
         $request->input('query'),
         $request->input('status', 'New'),
@@ -111,6 +114,7 @@ Route::get('/rest/productos', function () {
 });
 
 Route::post('/rest/adicionarCliente', function (\Illuminate\Http\Request $request) {
+    sci_check_request($request);
     //$json -> sci
     $json = json_decode($request->input("json"));
     //$json1 -> sugar
@@ -137,6 +141,7 @@ Route::get('/lead/{id}/duplicados', function ($id, \Illuminate\Http\Request $req
     return ["success" => true, "data" => $leads];
 });
 Route::post('/lead/{id}/quitarDuplicados', function ($id, \Illuminate\Http\Request $request) {
+    sci_check_request($request);
     $json = json_decode($request->input("json"));
     foreach($json->duplicados as $dupId) {
         if (empty($dupId) || $dupId == $id) continue;
@@ -161,3 +166,11 @@ Route::post('/lead/{id}/quitarDuplicados', function ($id, \Illuminate\Http\Reque
 Route::group(['middleware' => ['web']], function () {
     //
 });
+
+function sci_check_request($request=null) {
+     error_log($_SERVER['REQUEST_METHOD'] . ' ' . $_SERVER['REQUEST_URI']);
+     if ($request && is_object($request) && in_array('getContent', get_class_methods($request))) {
+         error_log($request->getContent());
+     }
+     error_log('---------------------------------');
+}
