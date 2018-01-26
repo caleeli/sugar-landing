@@ -123,6 +123,9 @@ Route::post('/rest/adicionarCliente', function (\Illuminate\Http\Request $reques
         $json1->status = 'Assigned';
         $results = \App\Lead::save(App\Lead::fromCC($json1));
     $json->cc_nro_oportunidad = $results['id'];
+    unset($json->cc_ciudad_nombre);
+    unset($json->cc_agencia_nombre);
+    unset($json->cc_usuario_nombre);
     return response()->json((new \App\FRest\AdicionaCliente($json))->call());
 });
 

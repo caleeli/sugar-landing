@@ -160,12 +160,12 @@
                                                     <input type="text" v-model="lead.crm_segundo_nombre_c" class="form-control" placeholder="">
                                                 </div>
                                                 <div class="col-xs-4 col-md-4">
-                                                    <label class="required control-label">Apellido paterno *</label>
-                                                    <input type="text" required v-model="lead.crm_apellido_paterno_c" class="form-control" placeholder="">
+                                                    <label class="control-label">Apellido paterno</label>
+                                                    <input type="text" v-model="lead.crm_apellido_paterno_c" class="form-control" placeholder="">
                                                 </div>
                                                 <div class="col-xs-4 col-md-4">
-                                                    <label class="required control-label">Apellido materno *</label>
-                                                    <input type="text" required v-model="lead.crm_apellido_materno_c" class="form-control" placeholder="">
+                                                    <label class="control-label">Apellido materno</label>
+                                                    <input type="text" v-model="lead.crm_apellido_materno_c" class="form-control" placeholder="">
                                                 </div>
                                                 <div class="col-xs-4 col-md-4">
                                                     <label class="control-label">Apellido casada</label>
@@ -541,6 +541,33 @@ $(document).ready(function () {
                     }
                 });
             },
+            getCcCiudadNombre : function (value) {
+                //<option v-for="row in agencias" v-bind:value="row.su_sucursal">{{row.su_nombre}}</option>
+                var self = this;
+                var res = '';
+                self.agencias.forEach(function (row) {
+                    if (row.su_sucursal===value) res = row.su_nombre;
+                });
+                return res;
+            },
+            getCcAgenciaNombre : function (value) {
+                //<option v-for="row in oficinas" v-bind:value="row.of_oficina">{{row.of_nombre}}</option>
+                var self = this;
+                var res = '';
+                self.oficinas.forEach(function (row) {
+                    if (row.of_oficina===value) res = row.of_nombre;
+                });
+                return res;
+            },
+            getCcUsuarioNombre : function (value) {
+                //<option v-for="row in usuarios" v-bind:value="row.us_usuario">{{row.us_nombre+' '+row.us_paterno}}</option>
+                var self = this;
+                var res = '';
+                self.usuarios.forEach(function (row) {
+                    if (row.us_usuario===value) res = row.us_nombre+' '+row.us_paterno;
+                });
+                return res;
+            },
             enviar: function () {
                 var self = this;
                 self.runningRequest = true;
@@ -587,6 +614,10 @@ $(document).ready(function () {
                         "cc_priorizar": self.lead.priorizar ? 1 : 0,
                         "cc_monto": nvl(self.lead.crm_amount_c),
                         "cc_actividad_cliente": nvl(self.lead.cc_actividad_c),
+                        
+                        "cc_ciudad_nombre" : self.getCcCiudadNombre(self.lead.cc_ciudad_c),
+                        "cc_agencia_nombre" : self.getCcAgenciaNombre(self.lead.cc_agencia_c),
+                        "cc_usuario_nombre" : self.getCcUsuarioNombre(self.lead.cc_usuario_c),
                     };
                     if (self.lead.crm_nro_documento_c*1 && nvl(self.lead.crm_tipo_documento_c)) {
                         clientRequest["cc_nro_documento"] = self.lead.crm_nro_documento_c*1;

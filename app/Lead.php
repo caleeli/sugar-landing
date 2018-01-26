@@ -57,6 +57,9 @@ class Lead
         "cc_monto"             => 'crm_amount_c',
         "cc_actividad_cliente" => 'cc_actividad_c',
         "cc_producto_id"       => 'cc_producto_id_c',
+        "cc_ciudad_nombre"     => "cc_ciudad_nombre_c",
+        "cc_agencia_nombre"    => "cc_agencia_nombre_c",
+        "cc_usuario_nombre"    => "cc_usuario_nombre_c",
     ];
 
     /**
