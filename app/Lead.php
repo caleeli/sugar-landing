@@ -60,6 +60,7 @@ class Lead
         "cc_ciudad_nombre"     => "cc_ciudad_nombre_c",
         "cc_agencia_nombre"    => "cc_agencia_nombre_c",
         "cc_usuario_nombre"    => "cc_usuario_nombre_c",
+        "cc_producto_descripcion" => "cc_producto_descripcion_c",
     ];
 
     /**
@@ -292,5 +293,75 @@ class Lead
         $data[self::LAST_NAME] = preg_replace('/\s+/', ' ', @$data[self::APELLIDO_PATERNO] . ' '
             . @$data[self::APELLIDO_MATERNO]);
         return $data;
+    }
+
+    private static $agencias = null;
+    private static $usuarios = [];
+    private static $productos = [
+        '1' => 'Credito',
+        '2' => 'Tarjeta de Crédito',
+        '3' => 'Boleta de garantia',
+        '4' => 'Caja de Ahorro',
+        '5' => 'Cuenta Corriente',
+        '6' => 'DPF',
+        '7' => 'Mi Red',
+        '8' => 'Comex',
+        '9' => 'Seguros Masivos-Servicios',
+    ];
+
+    public static function completeCiudadNombre(&$lead) {
+        if (!static::$agencias) {
+            static::$agencias = (array) (new \App\FRest\Agencias())->call();
+        }
+        if (empty($lead['cc_ciudad_nombre_c']) && !empty($lead['cc_ciudad_c'])) {
+            $agencia = array_first(static::$agencias, function ($agencia) use($lead) {
+                $agencia = (array) $agencia;
+                return $agencia['su_sucursal']==$lead['cc_ciudad_c'];
+            });
+            if ($agencia) {
+                $lead['cc_ciudad_nombre_c'] = $agencia['su_nombre'];
+            }
+        }
+    }
+
+    public static function completeAgenciaNombre(&$lead) {
+        if (!static::$agencias) {
+            static::$agencias = (array) (new \App\FRest\Agencias())->call();
+        }
+        if (empty($lead['cc_agencia_nombre_c']) && !empty($lead['cc_agencia_c'])) {
+            array_first(static::$agencias, function ($agencia) use(&$lead) {
+                $agencia = (array) $agencia;
+                foreach((array) $agencia['su_oficinas'] as $oficina) {
+                    $oficina = (array) $oficina;
+                    if ($oficina['of_oficina']==$lead['cc_agencia_c'])  {
+                        $lead['cc_agencia_nombre_c'] = $oficina['of_nombre'];
+                        return true;
+                    }
+                }
+            });
+        }
+    }
+
+    public static function completeUsuarioNombre(&$lead) {
+        $producto = $lead['cc_nro_producto'];
+        $agencia = $lead['cc_agencia_c'];
+        if (!static::$usuarios["$agencia,$producto"]) {
+            static::$usuarios["$agencia,$producto"] = (array) (new \App\FRest\Usuarios($agencia, $producto))->call();;
+        }
+        if (empty($lead['cc_usuario_nombre_c']) && !empty($lead['cc_usuario_c'])) {
+            array_first(static::$usuarios, function ($usuario) use(&$lead) {
+                $usuario = (array) $usuario;
+                if ($usuario['us_usuario']==$lead['cc_usuario_c'])  {
+                    $lead['cc_usuario_nombre_c'] = $usuario['us_nombre'] . ' ' . $usuario['us_paterno'];
+                    return true;
+                }
+            });
+        }
+    }
+
+    public static function completeProductoNombre(&$lead) {
+        if (empty($lead['cc_producto_descripcion_c']) && !empty($lead['cc_producto_id_c'])) {
+            $lead['cc_producto_descripcion_c'] = static::$productos[''.$lead['cc_producto_id_c']];
+        }
     }
 }

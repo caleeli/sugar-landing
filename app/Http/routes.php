@@ -154,6 +154,23 @@ Route::post('/lead/{id}/quitarDuplicados', function ($id, \Illuminate\Http\Reque
 
     return ["success" => true];
 });
+Route::get('/lead/completeData', function (\Illuminate\Http\Request $request) {
+
+    foreach (DB::select('select * from leads_cstm where cc_usuario_c is not null'
+        . ' or cc_agencia_c is not null'
+        . ' or cc_ciudad_c is not null'
+        . ' or cc_producto_id_c is not null') as $row) {
+        $lead = (array) $row;
+        dump($lead);
+        \App\Lead::completeLeadNames($lead);
+        \App\Lead::completeCiudadNombre($lead);
+        \App\Lead::completeAgenciaNombre($lead);
+        \App\Lead::completeUsuarioNombre($lead);
+        \App\Lead::completeProductoNombre($lead);
+        dd($lead);
+    }
+    return ["success" => true];
+});
 
 /*
 |--------------------------------------------------------------------------
