@@ -314,8 +314,7 @@ class Lead
             static::$agencias = (array) (new \App\FRest\Agencias())->call();
         }
         if (empty($lead['cc_ciudad_nombre_c']) && !empty($lead['cc_ciudad_c'])) {
-            $agencia = array_first(static::$agencias, function ($agencia) use($lead) {
-                $agencia = (array) $agencia;
+            $agencia = array_first(static::$agencias, function ($index, $agencia) use($lead) {
                 return $agencia['su_sucursal']==$lead['cc_ciudad_c'];
             });
             if ($agencia) {
@@ -329,8 +328,7 @@ class Lead
             static::$agencias = (array) (new \App\FRest\Agencias())->call();
         }
         if (empty($lead['cc_agencia_nombre_c']) && !empty($lead['cc_agencia_c'])) {
-            array_first(static::$agencias, function ($agencia) use(&$lead) {
-                $agencia = (array) $agencia;
+            array_first(static::$agencias, function ($index, $agencia) use(&$lead) {
                 foreach((array) $agencia['su_oficinas'] as $oficina) {
                     $oficina = (array) $oficina;
                     if ($oficina['of_oficina']==$lead['cc_agencia_c'])  {
@@ -349,7 +347,7 @@ class Lead
             static::$usuarios["$agencia,$producto"] = (array) (new \App\FRest\Usuarios($agencia, $producto))->call();;
         }
         if (empty($lead['cc_usuario_nombre_c']) && !empty($lead['cc_usuario_c'])) {
-            array_first(static::$usuarios, function ($usuario) use(&$lead) {
+            array_first(static::$usuarios, function ($index, $usuario) use(&$lead) {
                 $usuario = (array) $usuario;
                 if ($usuario['us_usuario']==$lead['cc_usuario_c'])  {
                     $lead['cc_usuario_nombre_c'] = $usuario['us_nombre'] . ' ' . $usuario['us_paterno'];
