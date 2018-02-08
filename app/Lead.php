@@ -320,7 +320,8 @@ class Lead
             static::$agencias = (array) (new \App\FRest\Agencias())->call();
         }
         if (empty($lead['cc_ciudad_nombre_c']) && !empty($lead['cc_ciudad_c'])) {
-            $agencia = array_first(static::$agencias, function ($index, $agencia) use($lead) {
+            $agencia = (array) array_first(static::$agencias, function ($index, $agencia) use($lead) {
+		$agencia = (array) $agencia;
                 return $agencia['su_sucursal']==$lead['cc_ciudad_c'];
             });
             if ($agencia) {
@@ -335,7 +336,8 @@ class Lead
         }
         if (empty($lead['cc_agencia_nombre_c']) && !empty($lead['cc_agencia_c'])) {
             array_first(static::$agencias, function ($index, $agencia) use(&$lead) {
-                foreach((array) $agencia['su_oficinas'] as $oficina) {
+                $agencia = (array) $agencia;
+		foreach((array) $agencia['su_oficinas'] as $oficina) {
                     $oficina = (array) $oficina;
                     if ($oficina['of_oficina']==$lead['cc_agencia_c'])  {
                         $lead['cc_agencia_nombre_c'] = $oficina['of_nombre'];
@@ -347,20 +349,28 @@ class Lead
     }
 
     public static function completeUsuarioNombre(&$lead) {
-        $producto = $lead['cc_nro_producto'];
+        $producto = $lead['cc_nro_producto_c'];if (!$producto) $producto = '1';
         $agencia = $lead['cc_agencia_c'];
-        if (!static::$usuarios["$agencia,$producto"]) {
-            static::$usuarios["$agencia,$producto"] = (array) (new \App\FRest\Usuarios($agencia, $producto))->call();;
+	for($ttl=0;$ttl<2;$ttl++) {
+        if (empty(static::$usuarios["$agencia,$producto"])) {
+            static::$usuarios["$agencia,$producto"] = (array) (new \App\FRest\Usuarios($agencia, $producto))->call();
         }
         if (empty($lead['cc_usuario_nombre_c']) && !empty($lead['cc_usuario_c'])) {
-            array_first(static::$usuarios, function ($index, $usuario) use(&$lead) {
+            $user = array_first(static::$usuarios["$agencia,$producto"], function ($index, $usuario) use(&$lead) {
                 $usuario = (array) $usuario;
                 if ($usuario['us_usuario']==$lead['cc_usuario_c'])  {
                     $lead['cc_usuario_nombre_c'] = $usuario['us_nombre'] . ' ' . $usuario['us_paterno'];
                     return true;
                 }
             });
-        }
+	    if ($user) {
+		$lead['cc_nro_producto_c'] = $producto;
+	    	break;
+	    }
+	    $producto = $producto=='1' ? '2' : '1';
+        } else { break;}
+	}
+	if (empty($lead['cc_usuario_nombre_c']) && !empty($lead['cc_usuario_c'])) $lead['cc_usuario_nombre_c'] = 'Usuario ' . $lead['cc_usuario_c'];
     }
 
     public static function completeProductoNombre(&$lead) {

@@ -155,19 +155,39 @@ Route::post('/lead/{id}/quitarDuplicados', function ($id, \Illuminate\Http\Reque
     return ["success" => true];
 });
 Route::get('/lead/completeData', function (\Illuminate\Http\Request $request) {
-
-    foreach (DB::select('select * from leads_cstm where cc_usuario_c is not null'
+/*dump(DB::select('select count(*) from leads_cstm where cc_usuario_c is not null'
         . ' or cc_agencia_c is not null'
         . ' or cc_ciudad_c is not null'
-        . ' or cc_producto_id_c is not null') as $row) {
+        . ' or cc_producto_id_c is not null'));*/
+    foreach (DB::select('select * from leads_cstm where (cc_usuario_c is not null'
+        . ' or cc_agencia_c is not null'
+        . ' or cc_ciudad_c is not null'
+        . ' or cc_producto_id_c is not null) and (cc_usuario_nombre_c is null or cc_agencia_nombre_c is null or cc_ciudad_nombre_c is null or cc_producto_descripcion_c is null or cc_nro_producto_c is null) limit 100') as $row) {
         $lead = (array) $row;
-        dump($lead);
+        //dump($lead);
         \App\Lead::completeLeadNames($lead);
         \App\Lead::completeCiudadNombre($lead);
         \App\Lead::completeAgenciaNombre($lead);
         \App\Lead::completeUsuarioNombre($lead);
         \App\Lead::completeProductoNombre($lead);
-        dd($lead);
+        dump($lead);
+        (DB::update('update leads_cstm set'
+            . ' cc_usuario_nombre_c=?,'
+            . ' cc_agencia_nombre_c=?,'
+            . ' cc_ciudad_nombre_c=?,'
+            . ' cc_producto_descripcion_c=?,'
+            . ' cc_nro_producto_c=?'
+            . ' where id_c=?',
+            [
+                $lead['cc_usuario_nombre_c'],
+                $lead['cc_agencia_nombre_c'],
+                $lead['cc_ciudad_nombre_c'],
+                $lead['cc_producto_descripcion_c'],
+                $lead['cc_nro_producto_c'],
+                $lead['id_c'],
+            ]
+        ));
+
     }
     return ["success" => true];
 });
