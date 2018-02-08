@@ -122,6 +122,12 @@ class Lead
                     break;
             }
         }
+        if (!empty($data['sfi_nro_cuenta_c'])) {
+            $data['status'] = 'Converted';
+        }
+        if (!empty($data['sfi_nro_prestamo_c'])) {
+            $data['status'] = 'Converted';
+        }
         return $data;
     }
 
