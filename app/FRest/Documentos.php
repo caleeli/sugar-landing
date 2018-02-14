@@ -9,7 +9,7 @@ namespace App\FRest;
  */
 class Documentos extends FRest
 {
-    protected $path = '/SCIWCF/SCI.svc/documents/1';
+    protected $path = '/documents/1';
     protected $method = 'GET';
     protected $sample = [
         "Documents"  => [

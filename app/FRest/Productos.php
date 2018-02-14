@@ -9,7 +9,7 @@ namespace App\FRest;
  */
 class Productos extends FRest
 {
-    protected $path = '/SCIWCF/SCI.svc/products';
+    protected $path = '/products';
     protected $method = 'GET';
     protected $sample = [];
 

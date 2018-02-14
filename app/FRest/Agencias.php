@@ -9,7 +9,7 @@ namespace App\FRest;
  */
 class Agencias extends FRest
 {
-    protected $path = '/SCIWCF/SCI.svc/branches';
+    protected $path = '/branches';
     protected $method = 'GET';
     protected $sample = [
         [

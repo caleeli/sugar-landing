@@ -11,7 +11,7 @@ use Exception;
  */
 class FRest
 {
-    protected $path = '/SCIWCF/SCI.svc/documents/1';
+    protected $path = '/documents/1';
     protected $method = 'GET';
     protected $headers = [];
     protected $cacheTime = 120;
