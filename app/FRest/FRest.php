@@ -40,7 +40,7 @@ class FRest
         }
         $curl = curl_init();
         $options = array(
-            CURLOPT_PORT           => "40448",
+//            CURLOPT_PORT           => "40448",
             CURLOPT_URL            => $this->getUrl(),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING       => "",
