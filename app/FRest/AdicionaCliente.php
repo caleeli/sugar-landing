@@ -9,7 +9,7 @@ namespace App\FRest;
  */
 class AdicionaCliente extends FRest
 {
-    protected $path = '/SCIWCF/SCI.svc/addClient';
+    protected $path = '/addClient';
     protected $method = 'POST';
     protected $headers = [
         "content-type: application/json",

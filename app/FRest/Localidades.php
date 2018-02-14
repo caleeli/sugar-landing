@@ -9,7 +9,7 @@ namespace App\FRest;
  */
 class Localidades extends FRest
 {
-    protected $path = '/SCIWCF/SCI.svc/places';
+    protected $path = '/places';
     protected $method = 'GET';
     protected $sample = [
         [
