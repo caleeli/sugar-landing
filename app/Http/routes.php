@@ -18,12 +18,12 @@ Route::get('/', function () {
 Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\Http\Request $request) {
     sci_check_request($request);
     $all = $request->all();
-    error_log(json_encode($all));
+    //error_log(json_encode($all));
     $data_json = json_decode($all['data_json']);
     //error_log(json_encode([$service, $code, $all]));
     //error_log(json_encode($data_json));
-    if ($service!='unbounce') {
-        return;
+    if ($service!='unbounce') { //instapage normal post
+        $data_json = $all;
     }
     $lead = \App\Lead::fromUnbounce($data_json);
     \App\Lead::completeLeadNames($lead);
