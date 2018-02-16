@@ -19,12 +19,14 @@ Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\
     sci_check_request($request);
     $all = $request->all();
     //error_log(json_encode($all));
-    $data_json = json_decode($all['data_json']);
-    //error_log(json_encode([$service, $code, $all]));
-    //error_log(json_encode($data_json));
-    if ($service!='unbounce') { //instapage normal post
+    if ($service=='unbounce') { //instapage normal post
+        $data_json = json_decode($all['data_json']);
+        //error_log(json_encode([$service, $code, $all]));
+        //error_log(json_encode($data_json));
+    } else {
         $data_json = $all;
     }
+    error_log(json_encode($data_json));
     $lead = \App\Lead::fromUnbounce($data_json);
     \App\Lead::completeLeadNames($lead);
     $lead['crm_landing_code_c'] = $code;
