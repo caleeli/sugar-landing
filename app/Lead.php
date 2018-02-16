@@ -153,9 +153,9 @@ class Lead
         //$notLike = self::secure($notLike);
         $like = '%' . preg_replace('/\s+|\'"/', '%', $query) . '%';
         $sugar = Sugar::getConnection();
+        //not used more:  OR " . self::CITY . " like '$like'
         $where = self::STATUS . ' like "'.$status.'" and (' . self::FULLNAME . " like '$like' OR "
-            . self::PHONE . " like '$like' OR "
-            . self::CITY . " like '$like') and " . self::PHONE . " is not null"
+            . self::PHONE . " like '$like') and " . self::PHONE . " is not null"
             . (!empty($phone) ? ' and ' . self::PHONE . "='$phone'" :'');
         return (self::completeFromLanding($sugar->get(
                     "Leads",
