@@ -261,6 +261,7 @@
                                                         <li><a href="javascript:void(0)" v-on:click="cambiarEstado('Inubicable')">INUBICABLE</a></li>
                                                     </ul>
                                                 </div>
+												<button v-show="false" type="button" v-on:click="guardarSinEnviar" class="btn btn-sm btn-primary" v-bind:disabled="runningRequest" data-toggle="tooltip" data-placement="top" title="Guardar"><i class="fa fa-save"></i> Guardar</button>
 												<button class="btn btn-sm btn-primary" v-bind:disabled="runningRequest" data-toggle="tooltip" data-placement="top" title="Enviar"><i class="fa fa-forward"></i> Enviar</button>
 											</div>
                                         </fieldset>
@@ -568,6 +569,88 @@ $(document).ready(function () {
                 });
                 return res;
             },
+            getCcUsuarioEmail : function (value) {
+                var self = this;
+                var res = '';
+                self.usuarios.forEach(function (row) {
+                    if (row.us_usuario===value) res = row.us_correoe;
+                });
+                return res;
+            },
+            guardarSinEnviar: function () {
+                var self = this;
+                self.runningRequest = true;
+                function nvl(a){
+                    return a ? a : '';
+                }
+                var prod = nvl(self.lead.cc_producto_c,'1-1').split('-');
+                var prodId=prod[0], prodDesc='';
+                self.productos.forEach(function (p) {
+                    if (p.co_correl==self.lead.cc_producto_c) {
+                        prodDesc = p.co_nombre;
+                    }
+                });
+                var clientRequest = {
+                        "cc_cliente_CRM":0,
+                        "cc_nro_oportunidad":self.lead.id,
+                        "cc_nombre_completo":nvl(
+                            [
+                                self.lead.crm_primer_nombre_c,
+                                self.lead.crm_segundo_nombre_c,
+                                self.lead.crm_apellido_paterno_c,
+                                self.lead.crm_apellido_materno_c,
+                                self.lead.crm_apellido_casada_c
+                                    ? 'de ' + self.lead.crm_apellido_casada_c
+                                    : '',
+                            ].join(" ").replace(/\s+/g," ")
+                        ),
+                        "cc_ciudad":nvl(self.lead.cc_ciudad_c),
+                        "cc_email":nvl(self.lead.email1),
+                        "cc_agencia":nvl(self.lead.cc_agencia_c),
+                        "cc_usuario":nvl(self.lead.cc_usuario_c),
+                        "cc_nombre":nvl(self.lead.crm_primer_nombre_c),
+                        "cc_segundo_nombre":nvl(self.lead.crm_segundo_nombre_c),
+                        "cc_paterno":nvl(self.lead.crm_apellido_paterno_c),
+                        "cc_materno":nvl(self.lead.crm_apellido_materno_c),
+                        "cc_apellido_casada":nvl(self.lead.crm_apellido_casada_c),
+                        "cc_telefono": nvl(self.lead.phone_mobile),
+                        "cc_nro_producto": prod[1],
+                        "cc_producto_descripcion":prodDesc,
+                        "cc_producto_id":prodId,
+                        "cc_mensaje":nvl(self.lead.cc_mensaje_c),
+                        "cc_estado":0,
+                        "cc_subestado":0,
+                        "cc_priorizar": self.lead.priorizar ? 1 : 0,
+                        "cc_monto": nvl(self.lead.crm_amount_c),
+                        "cc_actividad_cliente": nvl(self.lead.cc_actividad_c),
+                        
+                        "cc_ciudad_nombre" : self.getCcCiudadNombre(self.lead.cc_ciudad_c),
+                        "cc_agencia_nombre" : self.getCcAgenciaNombre(self.lead.cc_agencia_c),
+                        "cc_usuario_nombre" : self.getCcUsuarioNombre(self.lead.cc_usuario_c),
+                        "cc_usuario_email" : self.getCcUsuarioEmail(self.lead.cc_usuario_c),
+                    };
+                if (self.lead.crm_nro_documento_c*1 && nvl(self.lead.crm_tipo_documento_c)) {
+                    clientRequest["cc_nro_documento"] = self.lead.crm_nro_documento_c*1;
+                    clientRequest["cc_tipo_documento"]  = nvl(self.lead.crm_tipo_documento_c);
+                } else if (self.lead.crm_nro_documento_c*1 && !nvl(self.lead.crm_tipo_documento_c)) {
+                    alert("Por favor escoja el tipo de documento");
+                }
+                $.ajax({
+                    method: 'post',
+                    url: window.API_BASE+'/rest/guardarCliente',
+                    dataType: 'json',
+                    data: {"json":JSON.stringify(clientRequest)},
+                    success: function (res) {
+                        self.buscarLead(function () {
+                            self.runningRequest = false;
+                            self.leadIsOpen = false;
+                        });
+                    },
+                    error: function (res) {
+                        self.errorMessage = 'Ocurrio un error al guardar la solicitud: ' + res.responseText;
+                    }
+                });
+            },
             enviar: function () {
                 var self = this;
                 self.runningRequest = true;
@@ -618,13 +701,14 @@ $(document).ready(function () {
                         "cc_ciudad_nombre" : self.getCcCiudadNombre(self.lead.cc_ciudad_c),
                         "cc_agencia_nombre" : self.getCcAgenciaNombre(self.lead.cc_agencia_c),
                         "cc_usuario_nombre" : self.getCcUsuarioNombre(self.lead.cc_usuario_c),
+                        "cc_usuario_email" : self.getCcUsuarioEmail(self.lead.cc_usuario_c),
                     };
-                    if (self.lead.crm_nro_documento_c*1 && nvl(self.lead.crm_tipo_documento_c)) {
-                        clientRequest["cc_nro_documento"] = self.lead.crm_nro_documento_c*1;
-                        clientRequest["cc_tipo_documento"]  = nvl(self.lead.crm_tipo_documento_c);
-                    } else if (self.lead.crm_nro_documento_c*1 && !nvl(self.lead.crm_tipo_documento_c)) {
-                        alert("Por favor escoja el tipo de documento");
-                    }
+                if (self.lead.crm_nro_documento_c*1 && nvl(self.lead.crm_tipo_documento_c)) {
+                    clientRequest["cc_nro_documento"] = self.lead.crm_nro_documento_c*1;
+                    clientRequest["cc_tipo_documento"]  = nvl(self.lead.crm_tipo_documento_c);
+                } else if (self.lead.crm_nro_documento_c*1 && !nvl(self.lead.crm_tipo_documento_c)) {
+                    alert("Por favor escoja el tipo de documento");
+                }
                 $.ajax({
                     method: 'post',
                     url: window.API_BASE+'/rest/adicionarCliente',

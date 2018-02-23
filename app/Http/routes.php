@@ -123,12 +123,25 @@ Route::post('/rest/adicionarCliente', function (\Illuminate\Http\Request $reques
     $json1 = json_decode($request->input("json"));
         $json1->crm_enviado_a_sci_c = 1;
         $json1->status = 'Assigned';
+        $json1->sci_fecha_asignacion_c = date('Y-m-d H:i:s');
         $results = \App\Lead::save(App\Lead::fromCC($json1));
     $json->cc_nro_oportunidad = $results['id'];
     unset($json->cc_ciudad_nombre);
     unset($json->cc_agencia_nombre);
     unset($json->cc_usuario_nombre);
+    unset($json->cc_usuario_email);
+    dd($json);
     return response()->json((new \App\FRest\AdicionaCliente($json))->call());
+});
+
+Route::post('/rest/guardarCliente', function (\Illuminate\Http\Request $request) {
+    sci_check_request($request);
+    //$json -> sci
+    $json = json_decode($request->input("json"));
+    //$json1 -> sugar
+    $json1 = json_decode($request->input("json"));
+    $results = \App\Lead::save(App\Lead::fromCC($json1));
+    return ['success' => true];
 });
 
 Route::get('/lead/{id}/duplicados', function ($id, \Illuminate\Http\Request $request) {
