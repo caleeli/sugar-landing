@@ -130,7 +130,6 @@ Route::post('/rest/adicionarCliente', function (\Illuminate\Http\Request $reques
     unset($json->cc_agencia_nombre);
     unset($json->cc_usuario_nombre);
     unset($json->cc_usuario_email);
-    dd($json);
     return response()->json((new \App\FRest\AdicionaCliente($json))->call());
 });
 
