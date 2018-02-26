@@ -2,8 +2,8 @@ select
     cc_ciudad_nombre_c,
     cc_agencia_nombre_c,
 	cc_usuario_nombre_c,
-	mobile_phone,
-	email1
+	phone_mobile,
+	cc_usuario_email_c
 from 
     leads left join leads_cstm on (leads.id=leads_cstm-id_c)
 where
