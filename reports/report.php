@@ -20,7 +20,7 @@ $delimiter = ',';
 $delimiter_esc = preg_quote($delimiter, '/');
 $enclosure_esc = preg_quote($enclosure, '/');
 $first = true;
-while ($row = $stmt->fetch()) {
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $output = [];
     if ($first) {
         $header = array_keys($row);
