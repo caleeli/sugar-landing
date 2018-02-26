@@ -5,6 +5,6 @@ select
 	phone_mobile,
 	cc_usuario_email_c
 from 
-    leads left join leads_cstm on (leads.id=leads_cstm-id_c)
+    leads left join leads_cstm on (leads.id=leads_cstm.id_c)
 where
     date_entered >= '2018-01-01'
