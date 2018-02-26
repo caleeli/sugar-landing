@@ -13,7 +13,7 @@ $stmt = $connection->prepare($query);
 $stmt->execute([]);
 
 header("Content-type: text/csv");
-header("Content-Disposition: attachment; filename=file.csv");
+header("Content-Disposition: attachment; filename=$id.csv");
 header("Pragma: no-cache");
 header("Expires: 0");
 
