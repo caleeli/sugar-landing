@@ -4,6 +4,8 @@ if (emty($_REQUEST['id'])) {
     die('missing argument');
 }
 $id = $_REQUEST['id'];
+ini_set('display_errors', 'on');
+error_reporting(E_ALL);
 
 $query = file_get_contents(__DIR__ . '/queries/' . $id . '.sql');
 $stmt = $connection->prepare($query);
