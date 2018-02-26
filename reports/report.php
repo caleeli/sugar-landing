@@ -12,7 +12,7 @@ $query = file_get_contents(__DIR__ . '/queries/' . $id . '.sql');
 $stmt = $connection->prepare($query);
 $res = $stmt->execute([]);
 var_dump($res);
-die($sql);
+die($query);
 header("Content-type: text/csv");
 header("Content-Disposition: attachment; filename=$id.csv");
 header("Pragma: no-cache");
