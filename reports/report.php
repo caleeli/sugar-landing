@@ -19,8 +19,14 @@ $enclosure = '"';
 $delimiter = ',';
 $delimiter_esc = preg_quote($delimiter, '/');
 $enclosure_esc = preg_quote($enclosure, '/');
+$first = true;
 while ($row = $stmt->fetch()) {
     $output = [];
+    if ($first) {
+        $header = array_keys($row);
+        echo implode($delimiter, $header), "\n";
+        $first = false;
+    }
     foreach ($row as $field) {
         if ($encloseAll || preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field)) {
             $output[] = $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field) . $enclosure;
