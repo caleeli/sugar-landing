@@ -1,11 +1,12 @@
 <?php
+ini_set('display_errors', 'on');
+error_reporting(E_ALL);
+
 $connection = require 'connection.php';
-if (emty($_REQUEST['id'])) {
+if (empty($_REQUEST['id'])) {
     die('missing argument');
 }
 $id = $_REQUEST['id'];
-ini_set('display_errors', 'on');
-error_reporting(E_ALL);
 
 $query = file_get_contents(__DIR__ . '/queries/' . $id . '.sql');
 $stmt = $connection->prepare($query);
@@ -30,5 +31,5 @@ while ($row = $stmt->fetch()) {
             $output[] = $field;
         }
     }
-    echo implode( $delimiter, $output ), "\n";
+    echo implode($delimiter, $output), "\n";
 }
