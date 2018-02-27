@@ -223,11 +223,10 @@
                                                     <label class="control-label">Actividad económica</label>
                                                     <input type="text" v-model="lead.cc_actividad_c" class="form-control" placeholder="">
                                                 </div>
-                                                <div class="col-xs-3 col-md-3">
+                                                <div class="col-xs-2 col-md-2">
                                                     <label class="control-label">¿Priorizar?</label>
-                                                    <div class="checkbox">
-                                                        <label>
-                                                            <div v-on:click="lead.priorizar=!lead.priorizar" v-bind:class="{toggle:1, btn:1, 'btn-primary': lead.priorizar, 'btn-default': !lead.priorizar, off: !lead.priorizar}" style="width: 128px; height: 34px;">
+                                                    <div>
+                                                            <div v-on:click="lead.priorizar=!lead.priorizar" v-bind:class="{toggle:1, btn:1, 'btn-primary': lead.priorizar, 'btn-default': !lead.priorizar, off: !lead.priorizar}" style="width: 100%; height: 34px;">
                                                                 <input data-toggle="toggle" type="checkbox">
                                                                 <div class="toggle-group">
                                                                     <label class="btn btn-primary toggle-on">Priorizar</label>
@@ -236,16 +235,19 @@
                                                                 </div>
                                                             </div>
                                                             
-                                                        </label>
                                                     </div>
+                                                </div>
+                                                <div class="col-xs-1 col-md-1">
+                                                    <label class="control-label">Edad</label>
+                                                    <input type="text" v-model="lead.crm_edad_c" class="form-control" placeholder="">
+                                                </div>
+                                                <div class="col-xs-3 col-md-3">
+                                                    <label class="control-label">Monto</label>
+                                                    <input type="text" v-model="lead.crm_amount_c" class="form-control" placeholder="">
                                                 </div>
                                                 <div class="col-xs-3 col-md-3">
                                                     <label class="control-label">Agencia registrada en landing</label>
                                                     <input type="text" v-model="lead.crm_city_c" disabled class="form-control" placeholder="">
-                                                </div>
-                                                <div class="col-xs-3 col-md-3">
-                                                    <label class="control-label">Monto registrado en landing</label>
-                                                    <input type="text" v-model="lead.crm_amount_c" disabled class="form-control" placeholder="">
                                                 </div>
                                             </div>
 											
@@ -627,6 +629,7 @@ $(document).ready(function () {
                         "cc_agencia_nombre" : self.getCcAgenciaNombre(self.lead.cc_agencia_c),
                         "cc_usuario_nombre" : self.getCcUsuarioNombre(self.lead.cc_usuario_c),
                         "cc_usuario_email" : self.getCcUsuarioEmail(self.lead.cc_usuario_c),
+                        "cc_edad" : nvl(self.lead.cc_edad_c),
                     };
                 if (self.lead.crm_nro_documento_c*1 && nvl(self.lead.crm_tipo_documento_c)) {
                     clientRequest["cc_nro_documento"] = self.lead.crm_nro_documento_c*1;
@@ -701,6 +704,7 @@ $(document).ready(function () {
                         "cc_agencia_nombre" : self.getCcAgenciaNombre(self.lead.cc_agencia_c),
                         "cc_usuario_nombre" : self.getCcUsuarioNombre(self.lead.cc_usuario_c),
                         "cc_usuario_email" : self.getCcUsuarioEmail(self.lead.cc_usuario_c),
+                        "cc_edad" : nvl(self.lead.cc_edad_c),
                     };
                 if (self.lead.crm_nro_documento_c*1 && nvl(self.lead.crm_tipo_documento_c)) {
                     clientRequest["cc_nro_documento"] = self.lead.crm_nro_documento_c*1;
