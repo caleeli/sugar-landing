@@ -5,11 +5,12 @@ select
 	phone_mobile as "WIN",
 	cc_usuario_email_c as "Correo",
     date_entered as "Creado",
-    crm_datetime_c as "Guardado",
+    date_modified as "Guardado",
     sci_fecha_asignacion_c as "Enviado"
 
 from 
     leads left join leads_cstm on (leads.id=leads_cstm.id_c)
 where
-    date_entered >= CURDATE()
+    date_modified >= CURDATE()
+    and cc_usuario_email_c is not null and cc_usuario_email_c!=''
 order by date_entered
