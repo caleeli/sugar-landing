@@ -7,4 +7,5 @@ select
 from 
     leads left join leads_cstm on (leads.id=leads_cstm.id_c)
 where
-    date_entered >= '2018-01-01'
+    date_entered >= DATE_FORMAT(NOW() ,'%Y-%m-01')
+order by date_entered
