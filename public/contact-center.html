@@ -433,7 +433,9 @@ $(document).ready(function () {
                 self.runningRequest = false;
                 self.leadIsOpen = true;
                 for(var a in lead) {
-                    self.lead[a] = lead[a];
+                    var b=a;
+                    if (a==='cc_producto_id_c') b = 'cc_producto_c';
+                    self.lead[b] = lead[a];
                 }
                 self.lead.priorizar = false;
                 self.buscarDuplicados(lead.id, lead.phone_mobile);

@@ -185,6 +185,9 @@ class Lead
                     self::FIRST_NAME,
                     self::LAST_NAME,
                     self::EDAD,
+                    'cc_producto_id_c',
+                    'cc_actividad_c',
+                    //'email1',
                     ], [
                         'where' => $where,
                         'offset' => $offset,
