@@ -433,9 +433,22 @@ $(document).ready(function () {
                 self.runningRequest = false;
                 self.leadIsOpen = true;
                 for(var a in lead) {
-                    var b=a;
-                    if (a==='cc_producto_id_c') b = 'cc_producto_c';
-                    self.lead[b] = lead[a];
+                    var b=a, val = lead[a];
+                    if (a==='cc_producto_id_c') {
+                        b = 'cc_producto_c';
+                        val = {
+                            '1' : '1-2',
+                            '2' : '2-2',
+                            '3' : '3-2',
+                            '4' : '4-1',
+                            '5' : '5-1',
+                            '6' : '6-1',
+                            '7' : '7-1',
+                            '8' : '8-1',
+                            '9' : '9-1',
+                        }[val];
+                    }
+                    self.lead[b] = val;
                 }
                 self.lead.priorizar = false;
                 self.buscarDuplicados(lead.id, lead.phone_mobile);
