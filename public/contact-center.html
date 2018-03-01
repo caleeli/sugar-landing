@@ -664,6 +664,7 @@ $(document).ready(function () {
                         "cc_usuario_nombre" : self.getCcUsuarioNombre(self.lead.cc_usuario_c),
                         "cc_usuario_email" : self.getCcUsuarioEmail(self.lead.cc_usuario_c),
                         "cc_edad" : nvl(self.lead.cc_edad_c),
+                        "crm_extension_c": nvl(self.lead.crm_extension_c),
                     };
                 if (self.lead.crm_nro_documento_c*1 && nvl(self.lead.crm_tipo_documento_c)) {
                     clientRequest["cc_nro_documento"] = self.lead.crm_nro_documento_c*1;
@@ -739,6 +740,7 @@ $(document).ready(function () {
                         "cc_usuario_nombre" : self.getCcUsuarioNombre(self.lead.cc_usuario_c),
                         "cc_usuario_email" : self.getCcUsuarioEmail(self.lead.cc_usuario_c),
                         "cc_edad" : nvl(self.lead.cc_edad_c),
+                        "crm_extension_c": nvl(self.lead.crm_extension_c),
                     };
                 if (self.lead.crm_nro_documento_c*1 && nvl(self.lead.crm_tipo_documento_c)) {
                     clientRequest["cc_nro_documento"] = self.lead.crm_nro_documento_c*1;
