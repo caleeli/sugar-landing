@@ -180,6 +180,7 @@ class Lead
                     self::TIPO_DOCUMENTO,
                     self::NRO_DOCUMENTO,
                     self::EXTENSION,
+                    'cc_producto_id_c',
                     self::CC_CIUDAD,
                     self::CC_AGENCIA,
                     self::CC_USUARIO,
@@ -187,7 +188,6 @@ class Lead
                     self::FIRST_NAME,
                     self::LAST_NAME,
                     self::EDAD,
-                    'cc_producto_id_c',
                     'cc_actividad_c',
                     self::EMAIL,
                     ], [
