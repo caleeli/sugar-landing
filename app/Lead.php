@@ -162,9 +162,7 @@ class Lead
         //    . self::PHONE . " like '$like') and "
         $where = self::STATUS . ' like "'.$status.'" '
             . (!empty($phone) ? (' and ' . self::PHONE . "=\"$phone\"") :(' and ' . self::PHONE . " is not null"));
-        return (self::completeFromLanding($sugar->get(
-                    "Leads",
-                    [
+        $fields = [
                     'id',
                     self::FULLNAME,
                     self::PHONE,
@@ -191,7 +189,16 @@ class Lead
                     'cc_actividad_c',
                     self::EMAIL,
                     'crm_extension_c',
-                    ], [
+                    ];
+        if (!empty($phone)) {
+            $key = array_search($fields, 'crm_extension_c');
+            unset($fields[$key]);
+            $key = array_search($fields, 'cc_actividad_c');
+            unset($fields[$key]);
+        }
+        return (self::completeFromLanding($sugar->get(
+                    "Leads",
+                    $fields, [
                         'where' => $where,
                         'offset' => $offset,
                         'limit' => 20,
