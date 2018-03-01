@@ -666,12 +666,8 @@ $(document).ready(function () {
                         "cc_edad" : nvl(self.lead.cc_edad_c),
                         "crm_extension_c": nvl(self.lead.crm_extension_c),
                     };
-                if (self.lead.crm_nro_documento_c*1 && nvl(self.lead.crm_tipo_documento_c)) {
-                    clientRequest["cc_nro_documento"] = self.lead.crm_nro_documento_c*1;
-                    clientRequest["cc_tipo_documento"]  = nvl(self.lead.crm_tipo_documento_c);
-                } else if (self.lead.crm_nro_documento_c*1 && !nvl(self.lead.crm_tipo_documento_c)) {
-                    alert("Por favor escoja el tipo de documento");
-                }
+                clientRequest["cc_nro_documento"] = self.lead.crm_nro_documento_c;
+                clientRequest["cc_tipo_documento"]  = nvl(self.lead.crm_tipo_documento_c);
                 $.ajax({
                     method: 'post',
                     url: window.API_BASE+'/rest/guardarCliente',
