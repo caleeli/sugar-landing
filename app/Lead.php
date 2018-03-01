@@ -33,6 +33,7 @@ class Lead
     const CC_USUARIO = 'cc_usuario_c';
     const STATUS = 'status';
     const EDAD = 'cc_edad_c';
+    const EMAIL = 'crm_email_c';
 
     private static $alias = [
         'variant' => 'crm_variant_c',
@@ -42,7 +43,7 @@ class Lead
         "cc_nro_oportunidad"   => 'id',
         "cc_nombre_completo"   => 'crm_fullname_c',
         "cc_ciudad"            => 'cc_ciudad_c',
-        "cc_email"             => 'email1',
+        "cc_email"             => 'crm_email_c',
         "cc_agencia"           => 'cc_agencia_c',
         "cc_usuario"           => 'cc_usuario_c',
         "cc_nombre"            => 'crm_primer_nombre_c',
@@ -188,7 +189,7 @@ class Lead
                     self::EDAD,
                     'cc_producto_id_c',
                     'cc_actividad_c',
-                    //'email1',
+                    self::EMAIL,
                     ], [
                         'where' => $where,
                         'offset' => $offset,

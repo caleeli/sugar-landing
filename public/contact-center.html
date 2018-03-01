@@ -172,7 +172,7 @@
                                                 </div>
                                                 <div class="col-xs-3 col-md-3">
                                                     <label class="control-label">E-mail</label>
-                                                    <input type="email" v-model="lead.email1" class="form-control" placeholder="">
+                                                    <input type="email" v-model="lead.crm_email_c" class="form-control" placeholder="">
                                                 </div>
                                                 <div class="col-xs-3 col-md-3">
                                                     <label v-bind:class="{'control-label':1, required:!!lead.crm_nro_documento_c}">Tipo documento{{!!lead.crm_nro_documento_c?' *':''}}</label>
@@ -376,7 +376,7 @@ $(document).ready(function () {
                     cc_edad_c: '',
                     cc_producto_c: '',
                     cc_actividad_c: '',
-                    email1: '',
+                    crm_email_c: '',
                     crm_amount_c: '',
                     cc_mensaje_c: '',
                     crm_city_c: '',
@@ -629,7 +629,7 @@ $(document).ready(function () {
                             ].join(" ").replace(/\s+/g," ")
                         ),
                         "cc_ciudad":nvl(self.lead.cc_ciudad_c),
-                        "cc_email":nvl(self.lead.email1),
+                        "cc_email":nvl(self.lead.crm_email_c),
                         "cc_agencia":nvl(self.lead.cc_agencia_c),
                         "cc_usuario":nvl(self.lead.cc_usuario_c),
                         "cc_nombre":nvl(self.lead.crm_primer_nombre_c),
@@ -704,7 +704,7 @@ $(document).ready(function () {
                             ].join(" ").replace(/\s+/g," ")
                         ),
                         "cc_ciudad":nvl(self.lead.cc_ciudad_c),
-                        "cc_email":nvl(self.lead.email1),
+                        "cc_email":nvl(self.lead.crm_email_c),
                         "cc_agencia":nvl(self.lead.cc_agencia_c),
                         "cc_usuario":nvl(self.lead.cc_usuario_c),
                         "cc_nombre":nvl(self.lead.crm_primer_nombre_c),
