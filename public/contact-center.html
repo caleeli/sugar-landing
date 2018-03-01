@@ -432,6 +432,7 @@ $(document).ready(function () {
                 var self = this;
                 self.runningRequest = false;
                 self.leadIsOpen = true;
+                self.lead.cc_usuario_c = '';
                 for(var a in lead) {
                     var b=a, val = lead[a];
                     if (a==='cc_producto_id_c') {
