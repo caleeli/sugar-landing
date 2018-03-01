@@ -4,6 +4,9 @@ select
 	cc_usuario_nombre_c as "Nombre Funcionario",
 	phone_mobile as "WIN",
 	cc_usuario_email_c as "Correo",
+    cc_producto_descripcion_c as "Producto",
+    cc_edad_c as "Edad",
+    cc_actividad_c as "Actividad",
     date_entered as "Creado",
     date_modified as "Guardado",
     sci_fecha_asignacion_c as "Enviado"
