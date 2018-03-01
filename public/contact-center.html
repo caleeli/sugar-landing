@@ -449,6 +449,9 @@ $(document).ready(function () {
                         }[val];
                     }
                     self.lead[b] = val;
+                    if (a==='cc_ciudad_c') {
+                        self.cargarOficinas();
+                    }
                 }
                 self.lead.priorizar = false;
                 self.buscarDuplicados(lead.id, lead.phone_mobile);
