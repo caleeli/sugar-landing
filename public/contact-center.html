@@ -448,7 +448,13 @@ $(document).ready(function () {
                             '9' : '9-1',
                         }[val];
                     }
-                    self.lead[b] = val;
+                    if (a==='cc_usuario_c') {
+                        self.cargarUsuarios((function(val) { return function () {
+                            self.lead.cc_usuario_c = val;
+                        }})(val));
+                    } else {
+                        self.lead[b] = val;
+                    }
                     if (a==='cc_ciudad_c') {
                         self.cargarOficinas();
                     }
@@ -521,7 +527,7 @@ $(document).ready(function () {
                     }
                 });
             },
-            cargarUsuarios: function () {
+            cargarUsuarios: function (callback) {
                 var self = this;
                 var cc = self.lead.cc_producto_c ? self.lead.cc_producto_c : '-';
                 $.ajax({
