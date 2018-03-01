@@ -191,10 +191,14 @@ class Lead
                     'crm_extension_c',
                     ];
         if (!empty($phone)) {
-            $key = array_search('crm_extension_c', $fields);
-            unset($fields[$key]);
-            $key = array_search('cc_actividad_c', $fields);
-            unset($fields[$key]);
+        $fields = [
+                    'id',
+                    self::FULLNAME,
+                    self::PHONE,
+                    self::AMOUNT,
+                    'date_entered',
+                    self::LANDING_CODE,
+                ];
         }
         return (self::completeFromLanding($sugar->get(
                     "Leads",
