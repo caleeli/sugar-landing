@@ -160,8 +160,8 @@ class Lead
         //not used more:  OR " . self::CITY . " like '$like'
         //and (' . self::FULLNAME . " like '$like' OR "
         //    . self::PHONE . " like '$like') and "
-        $where = self::STATUS . ' like "'.$status.'" and ' . self::PHONE . " is not null"
-            . (!empty($phone) ? ' and ' . self::PHONE . "=\"$phone\"" :'');
+        $where = self::STATUS . ' like "'.$status.'" '
+            . (!empty($phone) ? (' and ' . self::PHONE . "=\"$phone\"") :(' and ' . self::PHONE . " is not null"));
         return (self::completeFromLanding($sugar->get(
                     "Leads",
                     [
