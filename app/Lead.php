@@ -190,6 +190,7 @@ class Lead
                     self::EDAD,
                     'cc_actividad_c',
                     self::EMAIL,
+                    'crm_extension_c',
                     ], [
                         'where' => $where,
                         'offset' => $offset,
