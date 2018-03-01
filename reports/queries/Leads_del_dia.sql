@@ -1,5 +1,5 @@
 select
-    crm_fullname_c as "Cliente",
+    concat(first_name," ", last_name) as "Cliente",
     cc_ciudad_nombre_c as "Sucursal",
     cc_agencia_nombre_c as "Agencia/Oficina	Cargo",
 	cc_usuario_nombre_c as "Nombre Funcionario",
