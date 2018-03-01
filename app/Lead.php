@@ -157,8 +157,9 @@ class Lead
         $like = '%' . preg_replace('/\s+|\'"/', '%', $query) . '%';
         $sugar = Sugar::getConnection();
         //not used more:  OR " . self::CITY . " like '$like'
-        $where = self::STATUS . ' like "'.$status.'" and (' . self::FULLNAME . " like '$like' OR "
-            . self::PHONE . " like '$like') and " . self::PHONE . " is not null"
+        //and (' . self::FULLNAME . " like '$like' OR "
+        //    . self::PHONE . " like '$like') and "
+        $where = self::STATUS . ' like "'.$status.'" and ' . self::PHONE . " is not null"
             . (!empty($phone) ? ' and ' . self::PHONE . "='$phone'" :'');
         return (self::completeFromLanding($sugar->get(
                     "Leads",
@@ -185,7 +186,7 @@ class Lead
                     self::FIRST_NAME,
                     self::LAST_NAME,
                     self::EDAD,
-                    //'cc_producto_id_c',
+                    'cc_producto_id_c',
                     //'cc_actividad_c',
                     //'email1',
                     ], [
