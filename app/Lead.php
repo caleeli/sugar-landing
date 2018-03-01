@@ -162,6 +162,7 @@ class Lead
         //    . self::PHONE . " like '$like') and "
         $where = self::STATUS . ' like "'.$status.'" and ' . self::PHONE . " is not null"
             . (!empty($phone) ? ' and ' . self::PHONE . "='$phone'" :'');
+        if ($phone) dd($where);
         return (self::completeFromLanding($sugar->get(
                     "Leads",
                     [
