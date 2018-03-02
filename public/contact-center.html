@@ -674,9 +674,11 @@ $(document).ready(function () {
                     dataType: 'json',
                     data: {"json":JSON.stringify(clientRequest)},
                     success: function (res) {
-                        self.buscarLead(function () {
-                            self.runningRequest = false;
-                            self.leadIsOpen = false;
+                        self.quitarDuplicados(function () {
+                            self.buscarLead(function () {
+                                self.runningRequest = false;
+                                self.leadIsOpen = false;
+                            });
                         });
                     },
                     error: function (res) {
