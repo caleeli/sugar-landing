@@ -160,7 +160,10 @@ class Lead
         //not used more:  OR " . self::CITY . " like '$like'
         //and (' . self::FULLNAME . " like '$like' OR "
         //    . self::PHONE . " like '$like') and "
+        $dateFrom = '2018-01-01';
+        $dateTo = '2018-03-05';
         $where = self::STATUS . ' like "'.$status.'" '
+            . " and (date_entered>='$dateFrom 00:00:00') and (date_entered<='$dateTo 23:59:59')"
             . (!empty($phone) ? (' and ' . self::PHONE . "=\"$phone\"") :(' and ' . self::PHONE . " is not null"));
         $fields = [
                     'id',
