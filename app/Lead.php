@@ -162,11 +162,17 @@ class Lead
         //    . self::PHONE . " like '$like') and "
         $dateFrom = '2018-01-01';
         $dateTo = '2018-03-05';
-        if (empty($phone)) {
-            $filterDate = " and (date_entered>='$dateFrom 00:00:00') and (date_entered<='$dateTo 23:59:59')";
+        $filterPhp = false;
+        if (!empty($phone)) {
+            $limit = 1000;
+        } elseif ($dateFrom || $dateTo) {
+            //$filterDate = " and (date_entered>='$dateFrom 00:00:00') and (date_entered<='$dateTo 23:59:59')";
+            $limit = 1000;
+            $filterPhp = true;
+        } else {
+            $limit = 20;
         }
         $where = self::STATUS . ' like "'.$status.'" '
-            . $filterDate
             . (!empty($phone) ? (' and ' . self::PHONE . "=\"$phone\"") :(' and ' . self::PHONE . " is not null"));
         $fields = [
                     'id',
@@ -206,15 +212,26 @@ class Lead
                     self::LANDING_CODE,
                 ];
         }
-        return (self::completeFromLanding($sugar->get(
+        $records = $sugar->get(
                     "Leads",
                     $fields, [
                         'where' => $where,
                         'offset' => $offset,
-                        'limit' => 20,
+                        'limit' => $limit,
                         'order_by' => 'date_entered DESC',
                     ]
-        )));
+        );
+        if ($filterPhp) {
+            array_filter($records, function ($row) use($dateFrom, $dateTo) {
+                return (!$dateFrom && !$dateTo) ||
+                    (
+                        (!$dateFrom || $row['date_entered']>=$dateFrom) &&
+                        (!$dateTo || $row['date_entered']<=$dateTo)
+                    );
+            });
+            $records = array_slice($records, 0, 20);
+        }
+        return (self::completeFromLanding($records));
     }
 
     private static function groupByPhone($leads)
