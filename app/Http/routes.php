@@ -88,7 +88,10 @@ Route::get('/lead/find', function (\Illuminate\Http\Request $request) {
     $leads = \App\Lead::findFromLanding(
         $request->input('query'),
         $request->input('status', 'New'),
-        $request->input('offset', 0)
+        $request->input('offset', 0),
+        null,
+        $request->input('dateFrom', ''),
+        $request->input('dateTo', '')
     );
 
     return ["success" => true, "data" => $leads];
