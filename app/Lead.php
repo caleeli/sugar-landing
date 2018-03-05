@@ -227,7 +227,7 @@ class Lead
                         (!$dateTo || $row['date_entered']<=$dateTo)
                     );
             });
-            $records = array_slice($records, 0, 20);
+            //$records = array_slice($records, 0, 20);
         }
         return (self::completeFromLanding($records));
     }
