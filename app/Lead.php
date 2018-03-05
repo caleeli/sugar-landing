@@ -220,14 +220,14 @@ class Lead
                     ]
         );
         if ($filterPhp) {
-            array_filter($records, function ($row) use($dateFrom, $dateTo) {
+            $records = array_filter($records, function ($row) use($dateFrom, $dateTo) {
                 return (!$dateFrom && !$dateTo) ||
                     (
                         (!$dateFrom || $row['date_entered']>=$dateFrom) &&
                         (!$dateTo || $row['date_entered']<=$dateTo)
                     );
             });
-            //$records = array_slice($records, 0, 20);
+            $records = array_slice($records, 0, 20);
         }
         return (self::completeFromLanding($records));
     }
