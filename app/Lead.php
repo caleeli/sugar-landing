@@ -147,7 +147,7 @@ class Lead
      * @param type $offset Inicia en 0
      * @return type
      */
-    public static function findFromLanding($query, $status, $offset, $phone=null, $notLike=null)
+    public static function findFromLanding($query, $status, $offset, $phone=null, $notLike=null, $dateFrom='', $dateTo='')
     {
         $query = self::secure($query);
         $status = self::secure($status);
@@ -160,8 +160,6 @@ class Lead
         //not used more:  OR " . self::CITY . " like '$like'
         //and (' . self::FULLNAME . " like '$like' OR "
         //    . self::PHONE . " like '$like') and "
-        $dateFrom = '2018-01-01';
-        $dateTo = '2018-03-05';
         $filterPhp = false;
         if (!empty($phone)) {
             $limit = 1000;
