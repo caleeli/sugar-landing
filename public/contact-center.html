@@ -616,7 +616,6 @@ $(document).ready(function () {
             guardarSinEnviar: function () {
                 var self = this;
                 self.boton = 'guardar';
-                return false;
                 self.runningRequest = true;
                 function nvl(a){
                     return a ? a : '';
@@ -691,7 +690,10 @@ $(document).ready(function () {
             },
             enviar: function () {
                 var self = this;
-                console.log(self.boton);
+                if (self.boton==='guardar') {
+                    console.log('solo se guardo');
+                    return false;
+                }
                 return false;
                 self.runningRequest = true;
                 function nvl(a){
