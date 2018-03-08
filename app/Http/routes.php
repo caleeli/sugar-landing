@@ -145,9 +145,9 @@ Route::post('/rest/guardarCliente', function (\Illuminate\Http\Request $request)
     //$json1 -> sugar
     $json1 = json_decode($request->input("json"));
         //A solicitud se filtraran los leads que han sido guardadas
-        if ($json1->cc_usuario_email) {
+        //if ($json1->cc_usuario_email) {
             $json1->status = 'Guardado';
-        }
+        //}
     $results = \App\Lead::save(App\Lead::fromCC($json1));
     return ['success' => true];
 });

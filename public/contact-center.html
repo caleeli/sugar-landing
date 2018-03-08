@@ -262,8 +262,8 @@
                                                         <li><a href="javascript:void(0)" v-on:click="cambiarEstado('Inubicable')">INUBICABLE</a></li>
                                                     </ul>
                                                 </div>
-												<button type="button" v-on:click="guardarSinEnviar" class="btn btn-sm btn-primary" v-bind:disabled="runningRequest" data-toggle="tooltip" data-placement="top" title="Guardar"><i class="fa fa-save"></i> Guardar</button>
-												<button class="btn btn-sm btn-primary" v-bind:disabled="runningRequest" data-toggle="tooltip" data-placement="top" title="Enviar"><i class="fa fa-forward"></i> Enviar</button>
+												<button type="submit" v-on:click="guardarSinEnviar" class="btn btn-sm btn-primary" v-bind:disabled="runningRequest" data-toggle="tooltip" data-placement="top" title="Guardar"><i class="fa fa-save"></i> Guardar</button>
+												<button type="submit" v-on:click="boton='enviar'" class="btn btn-sm btn-primary" v-on:click="boton='eniar'" v-bind:disabled="runningRequest" data-toggle="tooltip" data-placement="top" title="Enviar"><i class="fa fa-forward"></i> Enviar</button>
 											</div>
                                         </fieldset>
                                     </form>
@@ -364,6 +364,7 @@ $(document).ready(function () {
             return {
                 errorMessage: '',
                 runningRequest : false,
+                boton: 'enviar',
                 leads: [],
                 offset: 0,
                 telefono: '',
@@ -614,6 +615,8 @@ $(document).ready(function () {
             },
             guardarSinEnviar: function () {
                 var self = this;
+                self.boton = 'guardar';
+                return false;
                 self.runningRequest = true;
                 function nvl(a){
                     return a ? a : '';
@@ -688,6 +691,8 @@ $(document).ready(function () {
             },
             enviar: function () {
                 var self = this;
+                console.log(self.boton);
+                return false;
                 self.runningRequest = true;
                 function nvl(a){
                     return a ? a : '';
