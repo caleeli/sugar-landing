@@ -36,7 +36,6 @@
         <div id="wrapper">
 
             <div id="page-wrapper" class="white-bg">
-            <a href="http://192.168.200.191/reports/index.php" class="btn btn-default">Reportes</a>
                 <!-- div class="row wrapper border-bottom white-bg page-heading">
                     <div class="col-lg-10">
                         <h2>Contact Center</h2>
@@ -45,7 +44,24 @@
 
                     </div>
                 </div -->
-
+                <div class="row">
+                    <div class="col-sm-2">
+                        <label><br></label><br>
+                        <a href="http://192.168.200.191/reports/index.php" class="btn btn-default">Reportes</a>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Fecha Inicial</label>
+                        <fecha v-model="fechaInicial"></fecha>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Fecha Final</label>
+                        <fecha v-model="fechaFinal"></fecha>
+                    </div>
+                    <div class="col-sm-2">
+                        <label><br></label><br>
+                        <button type="button" class="btn btn-primary" v-on:click="buscarLead">Filtrar</button>
+                    </div>
+                </div>
                 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
 
 
@@ -352,6 +368,15 @@
 
         <script src="bower_components/vue/dist/vue.min.js"></script>
 
+        <script type='text/x-template' id='template-fecha'>
+            <div class='input-group date'>
+                <input type='text' v-model="innerValue" class="form-control" />
+                <span class="input-group-addon" v-on:click="datepick" style="cursor:pointer">
+                    &#128198;
+                </span>
+            </div>
+        </script>
+
         <!-- Page-Level Scripts -->
         <script>
 $(document).ready(function () {
@@ -371,6 +396,8 @@ $(document).ready(function () {
                 nombre: '',
                 apellido: '',
                 leadIsOpen: false,
+                fechaInicial: '',
+                fechaFinal: '',
                 lead: {
                     priorizar: true,
                     crm_nro_documento_c: '',
@@ -416,7 +443,9 @@ $(document).ready(function () {
                 var query = '';//self.telefono + ' ' + self.nombre + ' ' + self.apellido;
                 $.ajax({
                     method: 'get',
-                    url: window.API_BASE+'/lead/find?query=' + encodeURIComponent(query) + '&status=New&offset='+self.offset,
+                    url: window.API_BASE+'/lead/find?query=' + encodeURIComponent(query) + '&status=New&offset='+self.offset
+                        + '&dateFrom='+self.fechaInicial
+                        + '&dateTo='+self.fechaFinal,
                     dataType: 'json',
                     success: function (res) {
                         self.leads.splice(0);
@@ -858,7 +887,47 @@ $(document).ready(function () {
         }
     });
     window.app = app;
-
+        Vue.component('fecha', {
+            template: '#template-fecha',
+            props: {
+                value: String
+            },
+            data: function () {
+                return {
+                    innerValue: this.value
+                };
+            },
+            methods: {
+                datepick: function() {
+                    var self = this;
+                    Vue.nextTick(function () {
+                        $(self.$el).datepicker({autoclose:true, format:'yyyy-mm-dd', language: 'es'});
+                        $(self.$el).datepicker('show');
+                        $(self.$el).on("changeDate", function (e) {
+                            self.innerValue = $(self.$el).find("input").val();
+                        });
+                    });
+                },
+            },
+            watch: {
+                'innerValue': function (value) {
+                    this.$emit('input', value);
+                },
+                'value': function (value) {
+                    this.innerValue = value;
+                }
+            },
+            updated: function () {
+                var self = this;
+                self.$nextTick(function () {
+                    $(self.$el).datepicker({autoclose:true, format:'yyyy-mm-dd', language: 'es'});
+                    $(self.$el).datepicker('show');
+                    $(self.$el).on("changeDate", function (e) {
+                        self.innerValue = $(self.$el).find("input").val();
+                    });
+                });
+            }
+        });
 });
 
         </script>
