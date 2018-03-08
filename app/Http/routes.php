@@ -85,6 +85,7 @@ Route::post('/lead/agenda/{codigo}', function ($codigo, \Illuminate\Http\Request
 
 Route::get('/lead/find', function (\Illuminate\Http\Request $request) {
     sci_check_request($request);
+    dump($request->input('dateFrom', ''));
     $leads = \App\Lead::findFromLanding(
         $request->input('query'),
         $request->input('status', 'New'),
