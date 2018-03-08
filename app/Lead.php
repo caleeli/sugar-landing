@@ -218,7 +218,7 @@ class Lead
                         'limit' => $limit,
                         'order_by' => 'date_entered DESC',
                     ]
-        );dd($filterPhp, $dateFrom , $dateTo, empty($phone));
+        );
         if ($filterPhp) {
             $records = array_filter($records, function ($row) use($dateFrom, $dateTo) {
                 return (!$dateFrom && !$dateTo) ||
@@ -227,7 +227,6 @@ class Lead
                         (!$dateTo || $row['date_entered']<=$dateTo)
                     );
             });
-            dd($records);
             $records = array_slice($records, 0, 20);
         }
         return (self::completeFromLanding($records));
