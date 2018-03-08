@@ -691,10 +691,8 @@ $(document).ready(function () {
             enviar: function () {
                 var self = this;
                 if (self.boton==='guardar') {
-                    console.log('solo se guardo');
                     return false;
                 }
-                return false;
                 self.runningRequest = true;
                 function nvl(a){
                     return a ? a : '';
