@@ -91,6 +91,7 @@ Route::get('/lead/find', function (\Illuminate\Http\Request $request) {
         $request->input('status', 'New'),
         $request->input('offset', 0),
         null,
+        null,
         $request->input('dateFrom', ''),
         $request->input('dateTo', '')
     );
