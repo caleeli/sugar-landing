@@ -223,8 +223,8 @@ class Lead
             $records = array_filter($records, function ($row) use($dateFrom, $dateTo) {
                 return (!$dateFrom && !$dateTo) ||
                     (
-                        (!$dateFrom || $row['date_entered']>=$dateFrom) &&
-                        (!$dateTo || $row['date_entered']<=$dateTo)
+                        (!$dateFrom || $row['date_entered']>="$dateFrom 00:00:00") &&
+                        (!$dateTo || $row['date_entered']<="$dateTo 23:59:59")
                     );
             });
             $records = array_slice($records, 0, 20);
