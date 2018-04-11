@@ -428,6 +428,42 @@ $(document).ready(function () {
                     {co_correl:'7-1',co_nombre:'Mi Red'},
                     {co_correl:'8-1',co_nombre:'Comex'},
                     {co_correl:'9-1',co_nombre:'Seguros Masivos-Servicios'},
+                    {co_correl:'10-2',co_nombre:'Boleta de Garantia Buena Inversión de Anticipo'},
+                    {co_correl:'11-2',co_nombre:'Boleta de Garantia Cumplimiento de Contrato'},
+                    {co_correl:'12-2',co_nombre:'Boleta de Garantia Seriedad Propuesta'},
+                    {co_correl:'13-2',co_nombre:'Cambio de Moneda'},
+                    {co_correl:'14-2',co_nombre:'Cobro de Transferencias del Exterior'},
+                    {co_correl:'15-2',co_nombre:'Corresponsalias'},
+                    {co_correl:'16-2',co_nombre:'Credito Eco Agropecuario'},
+                    {co_correl:'17-2',co_nombre:'Credito Eco Consumo'},
+                    {co_correl:'18-2',co_nombre:'Credito Eco Disponible'},
+                    {co_correl:'19-2',co_nombre:'Credito Eco DPF'},
+                    {co_correl:'20-2',co_nombre:'Credito Eco Hogar'},
+                    {co_correl:'21-2',co_nombre:'Credito Eco Hogar de Interes Social'},
+                    {co_correl:'22-2',co_nombre:'Credito Eco Individual'},
+                    {co_correl:'23-2',co_nombre:'Credito Eco Productivo'},
+                    {co_correl:'24-2',co_nombre:'Credito Eco Vivienda'},
+                    {co_correl:'25-2',co_nombre:'Credito Eco Vivienda de Interes Social'},
+                    {co_correl:'26-1',co_nombre:'Cuenta Corriente'},
+                    {co_correl:'27-1',co_nombre:'Cuenta Corriente Rentabiliza'},
+                    {co_correl:'28-1',co_nombre:'DPF'},
+                    {co_correl:'29-1',co_nombre:'DPF 540'},
+                    {co_correl:'30-1',co_nombre:'DPF Mundial'},
+                    {co_correl:'31-2',co_nombre:'Ecoaguinaldo',co_landing:'ecoaguinaldo'},
+                    {co_correl:'32-2',co_nombre:'Ecoaguinaldo Premium',co_landing:'EcoaguinaldoPremium'},
+                    //{co_correl:'33-2',co_nombre:'Ecoaguinaldo Premium'},
+                    {co_correl:'34-2',co_nombre:'Ecomaestro'},
+                    {co_correl:'35-2',co_nombre:'Ecomaestro Empresarial'},
+                    {co_correl:'36-2',co_nombre:'Ecomaestro Ganancia'},
+                    {co_correl:'37-2',co_nombre:'Ecomaestro Institucional'},
+                    {co_correl:'38-2',co_nombre:'Economista'},
+                    {co_correl:'39-2',co_nombre:'Ecopasanaku'},
+                    {co_correl:'40-2',co_nombre:'Envío de Transferencias al Exterior'},
+                    {co_correl:'41-2',co_nombre:'Giros'},
+                    {co_correl:'42-2',co_nombre:'Mi Red'},
+                    {co_correl:'43-2',co_nombre:'Pagos'},
+                    {co_correl:'44-2',co_nombre:'Recaudación y Cobranza'},
+                    {co_correl:'45-2',co_nombre:'Tarjeta de Crédito Oro'},
                 ],
                 actions: [],
             };
@@ -468,17 +504,22 @@ $(document).ready(function () {
                     var b=a, val = lead[a];
                     if (a==='cc_producto_id_c') {
                         b = 'cc_producto_c';
-                        val = {
-                            '1' : '1-2',
-                            '2' : '2-2',
-                            '3' : '3-2',
-                            '4' : '4-1',
-                            '5' : '5-1',
-                            '6' : '6-1',
-                            '7' : '7-1',
-                            '8' : '8-1',
-                            '9' : '9-1',
-                        }[val];
+                        var codProducto='';
+                        self.productos.forEach(function (prod) {
+                            var id = prod.co_correl.split('-')[0];
+                            if (id==val) {
+                                codProducto = prod.co_correl;
+                            }
+                        });
+                        val = codProducto;
+                    }
+                    if (a==='crm_landing_code_c' && !lead['cc_producto_id_c']) {
+                        b = 'cc_producto_c';
+                        self.productos.forEach(function (prod) {
+                            if (prod.co_landing && prod.co_landing==val) {
+                                val = prod.co_correl;
+                            }
+                        });
                     }
                     if (a==='cc_usuario_c') {
                         self.cargarUsuarios((function(val) { return function () {
