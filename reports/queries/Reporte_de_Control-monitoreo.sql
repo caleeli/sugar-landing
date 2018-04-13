@@ -14,7 +14,10 @@ select
     phone_work as "Tel. oficina",
     phone_other as "Tel. alternativo",
     phone_fax as "Fax",
-    email1 as "Correo electrónico",
+    (select email_address 
+        from email_addr_bean_rel left join email_addresses on (email_addr_bean_rel.email_address_id=email_addresses.id)
+        where email_addr_bean_rel.bean_id = leads.id
+    ) as "Correo electrónico",
     primary_address_street as "Calle de dirección principal",
     primary_address_city as "Ciudad de dirección principal",
     primary_address_state as "Estado/Provincia de dirección principal",
@@ -65,5 +68,5 @@ select
 from 
     leads left join leads_cstm on (leads.id=leads_cstm.id_c)
 where
-    date_modified >= DATE_FORMAT(NOW() ,'%Y-%m-01')
+    date_entered >= DATE_FORMAT(NOW() ,'%Y-01-01')
 order by date_entered
