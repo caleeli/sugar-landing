@@ -30,6 +30,9 @@ Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\
     error_log(var_export($lead, true));
     \App\Lead::completeLeadNames($lead);
     $lead['crm_landing_code_c'] = $code;
+    if (empty($lead['crm_email_c']) && !empty($lead['email1'])) $lead['crm_email_c'] = $lead['email1'];
+    if (empty($lead['email1']) && !empty($lead['crm_email_c'])) $lead['email1'] = $lead['crm_email_c'];
+    $lead['crm_canal_ingreso_c'] = 'LANDING';
     $results = \App\Lead::save($lead);
 
     error_log(print_r($results, true));
@@ -155,6 +158,9 @@ Route::post('/rest/guardarCliente', function (\Illuminate\Http\Request $request)
 
 Route::get('/lead/{id}/duplicados', function ($id, \Illuminate\Http\Request $request) {
     if (empty($request->input('phone'))) {
+        return ["success" => false, "data" => []];
+    }
+    if (empty($request->input('landing'))) {
         return ["success" => false, "data" => []];
     }
     $leads = \App\Lead::findFromLanding(

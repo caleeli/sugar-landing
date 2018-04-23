@@ -129,6 +129,7 @@
                                                     {{lead.date_entered}}
                                                 </td>
                                                 <td>
+                                                    {{lead.crm_canal_ingreso_c}}:
                                                     {{lead.crm_landing_code_c}}
                                                 </td>
                                                 <td class="text-right">
@@ -419,51 +420,54 @@ $(document).ready(function () {
                 oficinas: [],
                 duplicados : [],
                 productos: [
-                    {co_correl:'1-2',co_nombre:'Credito'},
-                    {co_correl:'2-2',co_nombre:'Tarjeta de Crédito'},
-                    {co_correl:'3-2',co_nombre:'Boleta de garantia'},
-                    {co_correl:'4-1',co_nombre:'Caja de Ahorro'},
-                    {co_correl:'5-1',co_nombre:'Cuenta Corriente'},
-                    {co_correl:'6-1',co_nombre:'DPF'},
-                    {co_correl:'7-1',co_nombre:'Mi Red'},
-                    {co_correl:'8-1',co_nombre:'Comex'},
-                    {co_correl:'9-1',co_nombre:'Seguros Masivos-Servicios'},
-                    {co_correl:'10-2',co_nombre:'Boleta de Garantia Buena Inversión de Anticipo'},
-                    {co_correl:'11-2',co_nombre:'Boleta de Garantia Cumplimiento de Contrato'},
-                    {co_correl:'12-2',co_nombre:'Boleta de Garantia Seriedad Propuesta'},
+                    //{co_correl:'1-2',co_nombre:'Credito'},
+                    //{co_correl:'2-2',co_nombre:'Tarjeta de Crédito'},
+                    //{co_correl:'3-2',co_nombre:'Boleta de garantia'},
+                    //{co_correl:'4-1',co_nombre:'Caja de Ahorro'},
+                    //{co_correl:'5-1',co_nombre:'Cuenta Corriente'},
+                    //{co_correl:'8-1',co_nombre:'Comex'},
+                    //{co_correl:'9-1',co_nombre:'Seguros Masivos-Servicios'},
+                    //{co_correl:'10-2',co_nombre:'Boleta de Garantia Buena Inversión de Anticipo'},
+                    //{co_correl:'11-2',co_nombre:'Boleta de Garantia Cumplimiento de Contrato'},
+                    //{co_correl:'12-2',co_nombre:'Boleta de Garantia Seriedad Propuesta'},
                     {co_correl:'13-1',co_nombre:'Cambio de Moneda'},
                     {co_correl:'14-1',co_nombre:'Cobro de Transferencias del Exterior'},
                     {co_correl:'15-1',co_nombre:'Corresponsalias'},
-                    {co_correl:'16-2',co_nombre:'Credito Eco Agropecuario'},
-                    {co_correl:'17-2',co_nombre:'Credito Eco Consumo'},
-                    {co_correl:'18-2',co_nombre:'Credito Eco Disponible'},
-                    {co_correl:'19-2',co_nombre:'Credito Eco DPF'},
-                    {co_correl:'20-2',co_nombre:'Credito Eco Hogar'},
-                    {co_correl:'21-2',co_nombre:'Credito Eco Hogar de Interes Social'},
-                    {co_correl:'22-2',co_nombre:'Credito Eco Individual'},
-                    {co_correl:'23-2',co_nombre:'Credito Eco Productivo'},
-                    {co_correl:'24-2',co_nombre:'Credito Eco Vivienda'},
-                    {co_correl:'25-2',co_nombre:'Credito Eco Vivienda de Interes Social'},
+                    //{co_correl:'16-2',co_nombre:'Credito Eco Agropecuario'},
+                    //{co_correl:'17-2',co_nombre:'Credito Eco Consumo'},
+                    //{co_correl:'18-2',co_nombre:'Credito Eco Disponible'},
+                    //{co_correl:'19-2',co_nombre:'Credito Eco DPF'},
+                    //{co_correl:'20-2',co_nombre:'Credito Eco Hogar'},
+                    //{co_correl:'21-2',co_nombre:'Credito Eco Hogar de Interes Social'},
+                    //{co_correl:'22-2',co_nombre:'Credito Eco Individual'},
+                    //{co_correl:'23-2',co_nombre:'Credito Eco Productivo'},
+                    //{co_correl:'24-2',co_nombre:'Credito Eco Vivienda'},
+                    //{co_correl:'25-2',co_nombre:'Credito Eco Vivienda de Interes Social'},
                     {co_correl:'26-1',co_nombre:'Cuenta Corriente'},
                     {co_correl:'27-1',co_nombre:'Cuenta Corriente Rentabiliza'},
-                    {co_correl:'28-1',co_nombre:'DPF'},
+                    {co_correl:'6-1',co_nombre:'DPF'},
                     {co_correl:'29-1',co_nombre:'DPF 540'},
                     {co_correl:'30-1',co_nombre:'DPF Mundial'},
                     {co_correl:'31-1',co_nombre:'Ecoaguinaldo',co_landing:'ecoaguinaldo'},
                     {co_correl:'32-1',co_nombre:'Ecoaguinaldo Premium',co_landing:'EcoaguinaldoPremium'},
-                    //{co_correl:'33-2',co_nombre:'Ecoaguinaldo Premium'},
                     {co_correl:'34-1',co_nombre:'Ecomaestro'},
                     {co_correl:'35-1',co_nombre:'Ecomaestro Empresarial'},
-                    {co_correl:'36-1',co_nombre:'Ecomaestro Ganancia'},
-                    {co_correl:'37-1',co_nombre:'Ecomaestro Institucional'},
-                    {co_correl:'38-1',co_nombre:'Economista'},
+                    //{co_correl:'36-2',co_nombre:'Ecomaestro Ganancia'},
+                    //{co_correl:'37-2',co_nombre:'Ecomaestro Institucional'},
+                    //{co_correl:'38-2',co_nombre:'Economista'},
                     {co_correl:'39-1',co_nombre:'Ecopasanaku'},
+                    {co_correl:'33-1',co_nombre:'Ecopasanaku Premium'},
                     {co_correl:'40-1',co_nombre:'Envío de Transferencias al Exterior'},
                     {co_correl:'41-1',co_nombre:'Giros'},
-                    {co_correl:'42-1',co_nombre:'Mi Red'},
+                    {co_correl:'7-1',co_nombre:'Mi Red'},
                     {co_correl:'43-1',co_nombre:'Pagos'},
                     {co_correl:'44-1',co_nombre:'Recaudación y Cobranza'},
                     {co_correl:'45-1',co_nombre:'Tarjeta de Crédito Oro'},
+
+                    {co_correl:'46-2',co_nombre:'Crédito para consumo'},
+                    {co_correl:'47-2',co_nombre:'Crédito para negocio'},
+                    {co_correl:'48-2',co_nombre:'Crédito de vivienda'},
+                    {co_correl:'49-2',co_nombre:'Tarjeta de crédito'},
                 ],
                 actions: [],
             };
@@ -533,15 +537,15 @@ $(document).ready(function () {
                     }
                 }
                 self.lead.priorizar = false;
-                self.buscarDuplicados(lead.id, lead.phone_mobile);
+                self.buscarDuplicados(lead.id, lead.phone_mobile, lead.crm_landing_code_c);
                 setTimeout(function (){$("#input_telefono").focus();}, 100);
             },
-            buscarDuplicados : function (id, phone) {
+            buscarDuplicados : function (id, phone, landing) {
                 var self = this;
                 self.duplicados.splice(0);
                 $.ajax({
                     method: 'get',
-                    url: window.API_BASE+'/lead/'+id+'/duplicados?phone=' + encodeURIComponent(phone),
+                    url: window.API_BASE+'/lead/'+id+'/duplicados?phone=' + encodeURIComponent(phone)+'&landing='+landing,
                     dataType: 'json',
                     success: function (res) {
                         res.data.forEach(function (row) {

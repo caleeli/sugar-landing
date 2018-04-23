@@ -34,6 +34,7 @@ class Lead
     const STATUS = 'status';
     const EDAD = 'cc_edad_c';
     const EMAIL = 'crm_email_c';
+    const CANAL_INGRESO = 'crm_canal_ingreso_c';
 
     private static $alias = [
         'variant' => 'crm_variant_c',
@@ -147,7 +148,7 @@ class Lead
      * @param type $offset Inicia en 0
      * @return type
      */
-    public static function findFromLanding($query, $status, $offset, $phone=null, $notLike=null, $dateFrom='', $dateTo='')
+    public static function findFromLanding($query, $status, $offset, $phone=null, $notLike=null, $dateFrom='', $dateTo='', $landing='')
     {
         $query = self::secure($query);
         $status = self::secure($status);
@@ -199,6 +200,7 @@ class Lead
                     'cc_actividad_c',
                     self::EMAIL,
                     'crm_extension_c',
+                    self::CANAL_INGRESO,
                     ];
         if (!empty($phone)) {
         $fields = [
@@ -228,6 +230,11 @@ class Lead
                     );
             });
             $records = array_slice($records, 0, 20);
+        }
+        if ($landing) {
+            $records = array_filter($records, function ($row) use($landing) {
+                return $row[self::LANDING_CODE] == $landing;
+            });
         }
         return (self::completeFromLanding($records));
     }
