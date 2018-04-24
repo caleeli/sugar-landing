@@ -129,9 +129,11 @@ class Lead
         }
         if (!empty($data['sfi_nro_cuenta_c'])) {
             $data['status'] = 'Converted';
+            $data['crm_datetime_c'] = Date('Y-m-d H:i:s');
         }
         if (!empty($data['sfi_nro_prestamo_c'])) {
             $data['status'] = 'Converted';
+            $data['crm_datetime_c'] = Date('Y-m-d H:i:s');
         }
         return $data;
     }
