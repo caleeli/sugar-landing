@@ -285,6 +285,39 @@
                                         </fieldset>
                                     </form>
                                     <hr>
+                                    <h4>Histórico</h4>
+                                    <table class="table table-stripped toggle-arrow-tiny" data-page-size="15">
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre y apellidos</th>
+                                                <th data-hide="phone">Fecha de registro</th>
+                                                <th class="text-right">Producto solicitado</th>
+                                                <th data-hide="phone">Estado</th>
+                                                <th class="text-right">Asignado a</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="lead in historico">
+                                                <td>
+                                                    {{lead.crm_fullname_c}}
+                                                </td>
+                                                <td>
+                                                    {{lead.date_entered}}
+                                                </td>
+                                                <td>
+                                                    {{lead.cc_producto_descripcion_c}}
+                                                </td>
+                                                <td>
+                                                    {{lead.status}}
+                                                </td>
+                                                <td>
+                                                    {{lead.sci_oficial_asignado_c ? lead.sci_oficial_asignado_c : lead.cc_usuario_nombre_c}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <hr>
                                     <h4>Duplicados</h4>
                                     <p>
                                         Los siguientes leads tienen el mismo número de teléfono, al <label class="label label-primary">enviar</label> la solicitud,
@@ -470,6 +503,7 @@ $(document).ready(function () {
                     {co_correl:'49-2',co_nombre:'Tarjeta de crédito'},
                 ],
                 actions: [],
+                historico: [],
             };
         },
         watch: {
@@ -553,6 +587,20 @@ $(document).ready(function () {
                                 row.isDuplicated = true;
                                 self.duplicados.push(row);
                             }
+                        });
+                    }
+                });
+            },
+            cargarHistorico : function (id, phone) {
+                var self = this;
+                self.duplicados.splice(0);
+                $.ajax({
+                    method: 'get',
+                    url: window.API_BASE+'/lead/'+id+'/historico?phone=' + encodeURIComponent(phone),
+                    dataType: 'json',
+                    success: function (res) {
+                        res.data.forEach(function (row) {
+                            self.historico.push(row);
                         });
                     }
                 });

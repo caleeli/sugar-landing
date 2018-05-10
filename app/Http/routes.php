@@ -221,6 +221,17 @@ Route::get('/lead/completeData', function (\Illuminate\Http\Request $request) {
     }
     return ["success" => true];
 });
+Route::get('/lead/{id}/historico', function ($id, \Illuminate\Http\Request $request) {
+    if (empty($request->input('phone'))) {
+        return ["success" => false, "data" => []];
+    }
+    $leads = \App\Lead::buscarHistorico(
+        $id,
+        $request->input('phone')
+    );
+
+    return ["success" => true, "data" => $leads];
+});
 
 /*
 |--------------------------------------------------------------------------

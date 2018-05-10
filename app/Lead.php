@@ -35,8 +35,14 @@ class Lead
     const EDAD = 'cc_edad_c';
     const EMAIL = 'crm_email_c';
     const CANAL_INGRESO = 'crm_canal_ingreso_c';
-
-    private static $alias = [
+    const SFI_NRO_CUENTA = 'sfi_nro_cuenta_c';
+    const SFI_NRO_PRESTAMO = 'sfi_nro_prestamo_c';
+    const SFI_MONTO = 'sfi_monto_c';
+    const SFI_PRODUCTO = 'sfi_producto_c';
+    const SCI_OFICIAL_ASIGNADO = 'sci_oficial_asignado_c';
+    const PRODUCTO_DESCRIPCION = 'cc_producto_descripcion_c';
+    const USUARIO_ENVIADO = 'cc_usuario_nombre_c';
+        private static $alias = [
         'variant' => 'crm_variant_c',
     ];
 
@@ -129,11 +135,11 @@ class Lead
         }
         if (!empty($data['sfi_nro_cuenta_c'])) {
             $data['status'] = 'Converted';
-            $data['crm_datetime_c'] = Date('Y-m-d H:i:s');
+            $data['fecha_conversion_c'] = Date('Y-m-d H:i:s');
         }
         if (!empty($data['sfi_nro_prestamo_c'])) {
             $data['status'] = 'Converted';
-            $data['crm_datetime_c'] = Date('Y-m-d H:i:s');
+            $data['fecha_conversion_c'] = Date('Y-m-d H:i:s');
         }
         return $data;
     }
@@ -202,7 +208,6 @@ class Lead
                     'cc_actividad_c',
                     self::EMAIL,
                     'crm_extension_c',
-                    self::CANAL_INGRESO,
                     ];
         if (!empty($phone)) {
         $fields = [
@@ -435,5 +440,37 @@ class Lead
         if (empty($lead['cc_producto_descripcion_c']) && !empty($lead['cc_producto_id_c'])) {
             $lead['cc_producto_descripcion_c'] = static::$productos[''.$lead['cc_producto_id_c']];
         }
+    }
+
+    /**
+     * Busca el historico de un lead por numero de celular.
+     *
+     * @param type $phone
+     */
+    public function buscarHistorico($id, $phone)
+    {
+        $id = self::secure($id);
+        $phone = self::secure($phone);
+        $sugar = Sugar::getConnection();
+        $where = self::PHONE . "=\"$phone\" and " . self::STATUS
+            . " not in (\"Duplicado\") and id != \"" . $id . "\"";
+        $fields = [
+                    'id',
+                    self::FULLNAME,
+                    self::PHONE,
+                    'date_entered',
+                    self::PRODUCTO_DESCRIPCION,
+                    self::SCI_OFICIAL_ASIGNADO,
+                    self::USUARIO_ENVIADO,
+                ];
+        $records = $sugar->get(
+                    "Leads",
+                    $fields, [
+                        'where' => $where,
+                        'limit' => 15,
+                        'order_by' => 'date_entered DESC',
+                    ]
+        );
+        return $records;
     }
 }
