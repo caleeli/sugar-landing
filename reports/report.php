@@ -9,7 +9,7 @@ $query = file_get_contents(__DIR__ . '/queries/' . $id . '.sql');
 $stmt = $connection->prepare($query);
 $res = $stmt->execute([]);
 
-header("Content-type: text/csv");
+header("Content-type: text/csv; charset=UTF-8");
 header("Content-Disposition: attachment; filename=$id.csv");
 header("Pragma: no-cache");
 header("Expires: 0");
@@ -34,5 +34,5 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $output[] = $field;
         }
     }
-    echo implode($delimiter, $output), "\n";
+    echo implode($delimiter, ($output)), "\n";
 }
