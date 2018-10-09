@@ -16,6 +16,7 @@ class Usuarios extends FRest
             "us_usuario" => 1234,
             "us_nombre"  => 'Usuario',
             "us_paterno" => 'de Prueba',
+            "us_cargo" => 'ENCARGADO DE PLATAFORMA',
         ]
     ];
 
