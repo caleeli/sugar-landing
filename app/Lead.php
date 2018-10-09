@@ -3,6 +3,8 @@
 namespace App;
 
 use Exception;
+use DateTime;
+use DateInterval;
 
 /**
  * Get Leads
@@ -34,6 +36,16 @@ class Lead
     const STATUS = 'status';
     const EDAD = 'cc_edad_c';
     const EMAIL = 'crm_email_c';
+    const CANAL_INGRESO = 'crm_canal_ingreso_c';
+    const SFI_NRO_CUENTA = 'sfi_nro_cuenta_c';
+    const SFI_NRO_PRESTAMO = 'sfi_nro_prestamo_c';
+    const SFI_MONTO = 'sfi_monto_c';
+    const SFI_PRODUCTO = 'sfi_producto_c';
+    const SCI_OFICIAL_ASIGNADO = 'sci_oficial_asignado_c';
+    const PRODUCTO_DESCRIPCION = 'cc_producto_descripcion_c';
+    const USUARIO_ENVIADO = 'cc_usuario_nombre_c';
+    const USUARIO_ENVIADO_CARGO = 'cc_usuario_cargo_c';
+    const SCI_OFICIAL_ASIGNADO_FECHA = 'sci_oficial_asignado_fecha_c';
 
     private static $alias = [
         'variant' => 'crm_variant_c',
@@ -62,9 +74,11 @@ class Lead
         "cc_ciudad_nombre"     => "cc_ciudad_nombre_c",
         "cc_agencia_nombre"    => "cc_agencia_nombre_c",
         "cc_usuario_nombre"    => "cc_usuario_nombre_c",
+        "cc_usuario_cargo"    => "cc_usuario_cargo_c",
         "cc_producto_descripcion" => "cc_producto_descripcion_c",
         "cc_usuario_email"     => "cc_usuario_email_c",
-        "cc_edad"                 => "cc_edad_c",
+        "cc_edad"              => "cc_edad_c",
+        "cc_usuario_cc"        => "cc_usuario_cc_c",
     ];
 
     /**
@@ -115,8 +129,9 @@ class Lead
                 case 'O':
                 case 'O':
                 case 'T':
-                case 'A':
                     $data['status'] = 'In Process';
+                    break;
+                case 'A':
                     break;
                 case 'R':
                     $data['status'] = 'NoCalifica';
@@ -128,9 +143,14 @@ class Lead
         }
         if (!empty($data['sfi_nro_cuenta_c'])) {
             $data['status'] = 'Converted';
+            $data['fecha_conversion_c'] = Date('Y-m-d H:i:s');
         }
         if (!empty($data['sfi_nro_prestamo_c'])) {
             $data['status'] = 'Converted';
+            $data['fecha_conversion_c'] = Date('Y-m-d H:i:s');
+        }
+        if (isset($data[self::SCI_OFICIAL_ASIGNADO]) && empty($data[self::SCI_OFICIAL_ASIGNADO_FECHA])) {
+            $data[self::SCI_OFICIAL_ASIGNADO_FECHA] = date('Y-m-d H:i:s');
         }
         return $data;
     }
@@ -147,7 +167,7 @@ class Lead
      * @param type $offset Inicia en 0
      * @return type
      */
-    public static function findFromLanding($query, $status, $offset, $phone=null, $notLike=null, $dateFrom='', $dateTo='')
+    public static function findFromLanding($query, $status, $offset, $phone=null, $notLike=null, $dateFrom='', $dateTo='', $landing='')
     {
         $query = self::secure($query);
         $status = self::secure($status);
@@ -161,16 +181,22 @@ class Lead
         //and (' . self::FULLNAME . " like '$like' OR "
         //    . self::PHONE . " like '$like') and "
         $filterPhp = false;
+        $filterDate = '';
+        $filterStatus = self::STATUS . ($status==='New' ? ' in ("'.$status.'", "Guardado") ' : ' like "'.$status.'" ');
         if (!empty($phone)) {
             $limit = 1000;
         } elseif ($dateFrom || $dateTo) {
             //$filterDate = " and (date_entered>='$dateFrom 00:00:00') and (date_entered<='$dateTo 23:59:59')";
-            $limit = 1000;
+            $filterDate = " and (date_entered<='".self::fixDate("$dateTo 23:59:59")."')";
+            $limit = 500;
+            //$limit = 1000;
             $filterPhp = true;
+            //$filterDate = ''
+            $filterStatus = 'status in ("New","Guardado") ';
         } else {
             $limit = 20;
         }
-        $where = self::STATUS . ' like "'.$status.'" '
+        $where = $filterStatus . $filterDate
             . (!empty($phone) ? (' and ' . self::PHONE . "=\"$phone\"") :(' and ' . self::PHONE . " is not null"));
         $fields = [
                     'id',
@@ -185,20 +211,21 @@ class Lead
                     self::APELLIDO_PATERNO,
                     self::APELLIDO_MATERNO,
                     self::APELLIDO_CASADA,
-                    self::TIPO_DOCUMENTO,
-                    self::NRO_DOCUMENTO,
-                    self::EXTENSION,
+                    //self::TIPO_DOCUMENTO,
+                    //self::NRO_DOCUMENTO,
+                    self::CANAL_INGRESO,
+                    //self::EXTENSION,
                     'cc_producto_id_c',
                     self::CC_CIUDAD,
                     self::CC_AGENCIA,
                     self::CC_USUARIO,
-                    self::STATUS,
+                    //self::STATUS,
                     self::FIRST_NAME,
                     self::LAST_NAME,
                     self::EDAD,
                     'cc_actividad_c',
                     self::EMAIL,
-                    'crm_extension_c',
+                    //'crm_extension_c',
                     ];
         if (!empty($phone)) {
         $fields = [
@@ -210,6 +237,7 @@ class Lead
                     self::LANDING_CODE,
                 ];
         }
+        error_log(json_encode($fields));
         $records = $sugar->get(
                     "Leads",
                     $fields, [
@@ -219,17 +247,33 @@ class Lead
                         'order_by' => 'date_entered DESC',
                     ]
         );
+        //error_log(json_encode([$filterPhp, $limit, count($records), $where]));
         if ($filterPhp) {
             $records = array_filter($records, function ($row) use($dateFrom, $dateTo) {
+                $fechaIngreso = date_create($row['date_entered'], timezone_open('UTC'));
+                date_timezone_set($fechaIngreso, timezone_open('America/La_Paz'));
+                $dateEntered = date_format($fechaIngreso, 'Y-m-d H:i:s');
                 return (!$dateFrom && !$dateTo) ||
                     (
-                        (!$dateFrom || $row['date_entered']>="$dateFrom 00:00:00") &&
-                        (!$dateTo || $row['date_entered']<="$dateTo 23:59:59")
+                        (!$dateFrom || $dateEntered>="$dateFrom 00:00:00") &&
+                        (!$dateTo || $dateEntered<="$dateTo 23:59:59")
                     );
             });
             $records = array_slice($records, 0, 20);
         }
+        if ($landing) {
+            $records = array_filter($records, function ($row) use($landing) {
+                return $row[self::LANDING_CODE] == $landing;
+            });
+        }
         return (self::completeFromLanding($records));
+    }
+
+    private static function fixDate($date)
+    {
+        $fechaIngreso = date_create($date, timezone_open('America/La_Paz'));
+        date_timezone_set($fechaIngreso, timezone_open('UTC'));
+        return date_format($fechaIngreso, 'Y-m-d H:i:s');
     }
 
     private static function groupByPhone($leads)
@@ -426,5 +470,40 @@ class Lead
         if (empty($lead['cc_producto_descripcion_c']) && !empty($lead['cc_producto_id_c'])) {
             $lead['cc_producto_descripcion_c'] = static::$productos[''.$lead['cc_producto_id_c']];
         }
+    }
+
+    /**
+     * Busca el historico de un lead por numero de celular.
+     *
+     * @param type $phone
+     */
+    public static function buscarHistorico($id, $phone)
+    {
+        $id = self::secure($id);
+        $phone = self::secure($phone);
+        $sugar = Sugar::getConnection();
+        $where = self::PHONE . "=\"$phone\" and " . self::STATUS
+            . " not in (\"Duplicado\") and id != \"" . $id . "\"";
+        $fields = [
+                    'id',
+                    self::FULLNAME,
+                    self::PHONE,
+                    'date_entered',
+                    self::PRODUCTO_DESCRIPCION,
+                    self::STATUS,
+                    self::SCI_OFICIAL_ASIGNADO,
+                    self::USUARIO_ENVIADO,
+                    self::LANDING_CODE,
+                    self::CANAL_INGRESO,
+                ];
+        $records = $sugar->get(
+                    "Leads",
+                    $fields, [
+                        'where' => $where,
+                        'limit' => 15,
+                        'order_by' => 'date_entered DESC',
+                    ]
+        );
+        return $records;
     }
 }

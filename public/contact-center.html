@@ -126,9 +126,10 @@
                                                     {{lead.crm_amount_c}}
                                                 </td>
                                                 <td>
-                                                    {{lead.date_entered}}
+                                                    {{toLocalTZ(lead.date_entered)}}
                                                 </td>
                                                 <td>
+                                                    {{lead.crm_canal_ingreso_c}}
                                                     {{lead.crm_landing_code_c}}
                                                 </td>
                                                 <td class="text-right">
@@ -190,24 +191,28 @@
                                                     <label class="control-label">E-mail</label>
                                                     <input type="email" v-model="lead.crm_email_c" class="form-control" placeholder="">
                                                 </div>
-                                                <div class="col-xs-3 col-md-3">
+                                                <div class="col-xs-3 col-md-3" style='visibility:hidden'>
                                                     <label v-bind:class="{'control-label':1, required:!!lead.crm_nro_documento_c}">Tipo documento{{!!lead.crm_nro_documento_c?' *':''}}</label>
                                                     <select class="form-control" v-bind:required="!!lead.crm_nro_documento_c" v-model="lead.crm_tipo_documento_c">
                                                         <option v-for="row in documentos" v-bind:value="row.tdoc_id">{{row.descripcion}}</option>
                                                     </select>
                                                 </div>
-                                                <div class="col-xs-3 col-md-3">
+                                                <!-- div class="col-xs-3 col-md-3">
                                                     <label class="control-label">Nro. Documento</label>
                                                     <input type="number" v-model="lead.crm_nro_documento_c" class="form-control" placeholder="">
-                                                </div>
-                                                <div class="col-xs-3 col-md-3">
+                                                </div -->
+                                                <div class="col-xs-3 col-md-3" style='visibility:hidden'>
                                                     <label v-bind:class="{'control-label':1, required:!!lead.crm_nro_documento_c}">Extensión{{!!lead.crm_nro_documento_c?' *':''}}</label>
                                                     <select class="form-control" v-bind:required="!!lead.crm_nro_documento_c" v-model="lead.crm_extension_c">
                                                         <option v-for="row in extensiones" v-bind:styl1e="{display:row.tdoc_id==lead.crm_tipo_documento_c?'':'none'}" v-bind:value="row.extension">{{row.descripcion}}</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-xs-3 col-md-3">
-                                                    <label class="required control-label">Producto *</label>
+                                                    <label class="control-label">Canal</label>
+                                                    <input v-model="lead.crm_canal_ingreso_c" disabled="disabled" class="form-control" placeholder="">
+                                                </div>
+                                                <div class="col-xs-3 col-md-3">
+                                                    <label class="required control-label">Modalidad Producto *</label>
                                                     <select class="form-control" required v-model="lead.cc_producto_c" v-on:change="cargarUsuarios">
                                                         <option v-for="row in productos" v-bind:value="row.co_correl">{{row.co_nombre}}</option>
                                                     </select>
@@ -227,7 +232,7 @@
                                                 <div class="col-xs-3 col-md-3">
                                                     <label class="required control-label">Funcionario *</label>
                                                     <select class="form-control" required v-model="lead.cc_usuario_c">
-                                                        <option v-for="row in usuarios" v-bind:value="row.us_usuario">{{row.us_nombre+' '+row.us_paterno}}</option>
+                                                        <option v-for="row in usuarios" v-bind:value="row.us_usuario">{{row.us_cargo + '-' + row.us_nombre+' '+row.us_paterno}}</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-xs-3 col-md-3" style="display:none;">
@@ -236,8 +241,8 @@
                                                     </textarea>
                                                 </div>
                                                 <div class="col-xs-3 col-md-3">
-                                                    <label class="control-label">Actividad económica</label>
-                                                    <input type="text" v-model="lead.cc_actividad_c" class="form-control" placeholder="">
+                                                    <label class="required control-label">Actividad económica *</label>
+                                                    <input type="text" v-model="lead.cc_actividad_c" required class="form-control" placeholder="">
                                                 </div>
                                                 <div class="col-xs-2 col-md-2">
                                                     <label class="control-label">¿Priorizar?</label>
@@ -258,7 +263,7 @@
                                                     <input type="text" v-model="lead.cc_edad_c" class="form-control" placeholder="">
                                                 </div>
                                                 <div class="col-xs-3 col-md-3">
-                                                    <label class="control-label">Monto</label>
+                                                    <label class="control-label">Monto Bs.</label>
                                                     <input type="text" v-model="lead.crm_amount_c" class="form-control" placeholder="">
                                                 </div>
                                                 <div class="col-xs-3 col-md-3">
@@ -276,13 +281,57 @@
                                                     <ul class="dropdown-menu">
                                                         <li><a href="javascript:void(0)" v-on:click="cambiarEstado('NoDesea')">NO DESEA</a></li>
                                                         <li><a href="javascript:void(0)" v-on:click="cambiarEstado('Inubicable')">INUBICABLE</a></li>
+                                                        <li><a href="javascript:void(0)" v-on:click="cambiarEstado('Equivocado')">NUMERO EQUIVOCADO</a></li>
+                                                        <li><a href="javascript:void(0)" v-on:click="cambiarEstado('ConversionDirecta')">CONVERSION DIRECTA</a></li>
+                                                        <li><a href="javascript:void(0)" v-on:click="cambiarEstado('EnTransito')">EN TRANSITO</a></li>
                                                     </ul>
                                                 </div>
-												<button type="submit" v-on:click="guardarSinEnviar" class="btn btn-sm btn-primary" v-bind:disabled="runningRequest" data-toggle="tooltip" data-placement="top" title="Guardar"><i class="fa fa-save"></i> Guardar</button>
-												<button type="submit" v-on:click="boton='enviar'" class="btn btn-sm btn-primary" v-on:click="boton='eniar'" v-bind:disabled="runningRequest" data-toggle="tooltip" data-placement="top" title="Enviar"><i class="fa fa-forward"></i> Enviar</button>
+												<button type="submit" v-on:click="boton='guardar'; guardarSinEnviar()" class="btn btn-sm btn-primary" v-bind:disabled="runningRequest" data-toggle="tooltip" data-placement="top" title="Guardar"><i class="fa fa-save"></i> Guardar</button>
+												<button type="submit" v-on:click="boton='enviar'" class="btn btn-sm btn-primary" v-bind:disabled="runningRequest" data-toggle="tooltip" data-placement="top" title="Enviar"><i class="fa fa-forward"></i> Enviar</button>
 											</div>
                                         </fieldset>
                                     </form>
+                                    <hr>
+                                    <h4>Histórico</h4>
+                                    <table class="table table-stripped toggle-arrow-tiny" data-page-size="15">
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre y apellidos</th>
+                                                <th data-hide="phone">Fecha de registro</th>
+                                                <th>Canal</th>
+                                                <th>Landing</th>
+                                                <th>Producto solicitado</th>
+                                                <th>Estado</th>
+                                                <th>Asignado a</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="lead in historico">
+                                                <td>
+                                                    {{lead.crm_fullname_c}}
+                                                </td>
+                                                <td>
+                                                    {{lead.date_entered}}
+                                                </td>
+                                                <td>
+                                                    {{lead.crm_canal_ingreso_c}}
+                                                </td>
+                                                <td>
+                                                    {{lead.crm_landing_code_c}}
+                                                </td>
+                                                <td>
+                                                    {{lead.cc_producto_descripcion_c}}
+                                                </td>
+                                                <td>
+                                                    {{traducirEstado(lead.status)}}
+                                                </td>
+                                                <td>
+                                                    {{lead.sci_oficial_asignado_c ? lead.sci_oficial_asignado_c : lead.cc_usuario_nombre_c}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
                                     <hr>
                                     <h4>Duplicados</h4>
                                     <p>
@@ -345,9 +394,29 @@
                 </div>
 
             </div>
+
+            <!-- Popup confirmacion guardado -->
+            <div id="confirmarGuardado" class="modal" role="dialog">
+              <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Confirmar guardado</h4>
+                  </div>
+                  <div class="modal-body">
+                    <p>¿Esta seguro de guardar los datos del cliente?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" v-on:click="guardarSinEnviarConfirmado" class="btn btn-primary" data-dismiss="modal">Guardar</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
         </div>
-
-
 
         <!-- Mainly scripts -->
         <script src="js/jquery-3.1.1.min.js"></script>
@@ -355,6 +424,7 @@
         <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
         <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
         <!-- script src="bower_components/bootstrap-toggle/js/bootstrap-toggle.min.js"></script -->
+        <script src="js/moment.min.js"></script>
 
         <!-- Custom and plugin javascript -->
         <script src="js/inspinia.js"></script>
@@ -419,17 +489,60 @@ $(document).ready(function () {
                 oficinas: [],
                 duplicados : [],
                 productos: [
-                    {co_correl:'1-2',co_nombre:'Credito'},
-                    {co_correl:'2-2',co_nombre:'Tarjeta de Crédito'},
-                    {co_correl:'3-2',co_nombre:'Boleta de garantia'},
-                    {co_correl:'4-1',co_nombre:'Caja de Ahorro'},
-                    {co_correl:'5-1',co_nombre:'Cuenta Corriente'},
+                    //{co_correl:'1-2',co_nombre:'Credito'},
+                    //{co_correl:'2-2',co_nombre:'Tarjeta de Crédito'},
+                    //{co_correl:'3-2',co_nombre:'Boleta de garantia'},
+                    //{co_correl:'4-1',co_nombre:'Caja de Ahorro'},
+                    //{co_correl:'5-1',co_nombre:'Cuenta Corriente'},
+                    //{co_correl:'8-1',co_nombre:'Comex'},
+                    //{co_correl:'9-1',co_nombre:'Seguros Masivos-Servicios'},
+                    //{co_correl:'10-2',co_nombre:'Boleta de Garantia Buena Inversión de Anticipo'},
+                    //{co_correl:'11-2',co_nombre:'Boleta de Garantia Cumplimiento de Contrato'},
+                    //{co_correl:'12-2',co_nombre:'Boleta de Garantia Seriedad Propuesta'},
+                    {co_correl:'13-1',co_nombre:'Cambio de Moneda'},
+                    {co_correl:'14-1',co_nombre:'Cobro de Transferencias del Exterior'},
+                    {co_correl:'15-1',co_nombre:'Corresponsalias'},
+                    //{co_correl:'16-2',co_nombre:'Credito Eco Agropecuario'},
+                    //{co_correl:'17-2',co_nombre:'Credito Eco Consumo'},
+                    //{co_correl:'18-2',co_nombre:'Credito Eco Disponible'},
+                    //{co_correl:'19-2',co_nombre:'Credito Eco DPF'},
+                    //{co_correl:'20-2',co_nombre:'Credito Eco Hogar'},
+                    //{co_correl:'21-2',co_nombre:'Credito Eco Hogar de Interes Social'},
+                    //{co_correl:'22-2',co_nombre:'Credito Eco Individual'},
+                    //{co_correl:'23-2',co_nombre:'Credito Eco Productivo'},
+                    //{co_correl:'24-2',co_nombre:'Credito Eco Vivienda'},
+                    //{co_correl:'25-2',co_nombre:'Credito Eco Vivienda de Interes Social'},
+                    {co_correl:'26-1',co_nombre:'Cuenta Corriente'},
+                    {co_correl:'27-1',co_nombre:'Cuenta Corriente Rentabiliza'},
                     {co_correl:'6-1',co_nombre:'DPF'},
+                    {co_correl:'29-1',co_nombre:'DPF 540'},
+                    {co_correl:'30-1',co_nombre:'DPF Mundial'},
+                    {co_correl:'31-1',co_nombre:'Ecoaguinaldo',co_landing:'ecoaguinaldo'},
+                    {co_correl:'32-1',co_nombre:'Ecoaguinaldo Premium',co_landing:'EcoaguinaldoPremium'},
+                    {co_correl:'34-1',co_nombre:'Ecomaestro'},
+                    {co_correl:'35-1',co_nombre:'Ecomaestro Empresarial'},
+                    //{co_correl:'36-2',co_nombre:'Ecomaestro Ganancia'},
+                    //{co_correl:'37-2',co_nombre:'Ecomaestro Institucional'},
+                    //{co_correl:'38-2',co_nombre:'Economista'},
+                    {co_correl:'39-1',co_nombre:'Ecopasanaku'},
+                    {co_correl:'33-1',co_nombre:'Ecopasanaku Premium'},
+                    {co_correl:'51-1',co_nombre:'Ecopasanaku Mi Promo'},
+                    {co_correl:'40-1',co_nombre:'Envío de Transferencias al Exterior'},
+                    {co_correl:'41-1',co_nombre:'Giros'},
                     {co_correl:'7-1',co_nombre:'Mi Red'},
-                    {co_correl:'8-1',co_nombre:'Comex'},
-                    {co_correl:'9-1',co_nombre:'Seguros Masivos-Servicios'},
+                    {co_correl:'43-1',co_nombre:'Pagos'},
+                    {co_correl:'44-1',co_nombre:'Recaudación y Cobranza'},
+                    {co_correl:'45-3',co_nombre:'Tarjeta de Crédito Oro'},
+
+                    {co_correl:'46-2',co_nombre:'Crédito para consumo'},
+                    {co_correl:'47-2',co_nombre:'Crédito para negocio'},
+                    {co_correl:'48-2',co_nombre:'Crédito de vivienda'},
+                    {co_correl:'49-3',co_nombre:'Tarjeta de crédito'},
+                    
+                    {co_correl:'50-2',co_nombre:'Boleta de garantia'},
                 ],
                 actions: [],
+                historico: [],
             };
         },
         watch: {
@@ -438,6 +551,27 @@ $(document).ready(function () {
             },
         },
         methods: {
+            toLocalTZ: function (datetime) {
+                return moment(datetime+' +0000', 'YYYY-MM-DD HH:mm:ss ZZ').utcOffset('-0400').format('YYYY-MM-DD HH:mm:ss');
+            },
+            traducirEstado: function (status) {
+                var defaultStatuses = {
+                    'New': 'No filtrado',
+                    'Assigned': 'Asignado',
+                    'In Progress': 'En gestión',
+                    'Converted': 'Convertido',
+                    'Recycled': 'Reciclado',
+                    'Dead': 'Expirado',
+                    'NoDesea': 'No desea',
+                    'NoCalifica': 'No califica',
+                    'Inubicable': 'Inubicable',
+                    'Anulado': 'Anulado',
+                    'Duplicado': 'Duplicado',
+                    'Guardado': 'Guardado',
+                    'Equivocado': 'Equivocado',
+                };
+                return defaultStatuses[status];
+            },
             buscarLead : function (callback) {
                 var self = this;
                 var query = '';//self.telefono + ' ' + self.nombre + ' ' + self.apellido;
@@ -464,21 +598,27 @@ $(document).ready(function () {
                 self.runningRequest = false;
                 self.leadIsOpen = true;
                 self.lead.cc_usuario_c = '';
+                self.boton = 'guardar';
                 for(var a in lead) {
                     var b=a, val = lead[a];
                     if (a==='cc_producto_id_c') {
                         b = 'cc_producto_c';
-                        val = {
-                            '1' : '1-2',
-                            '2' : '2-2',
-                            '3' : '3-2',
-                            '4' : '4-1',
-                            '5' : '5-1',
-                            '6' : '6-1',
-                            '7' : '7-1',
-                            '8' : '8-1',
-                            '9' : '9-1',
-                        }[val];
+                        var codProducto='';
+                        self.productos.forEach(function (prod) {
+                            var id = prod.co_correl.split('-')[0];
+                            if (id==val) {
+                                codProducto = prod.co_correl;
+                            }
+                        });
+                        val = codProducto;
+                    }
+                    if (a==='crm_landing_code_c' && !lead['cc_producto_id_c']) {
+                        b = 'cc_producto_c';
+                        self.productos.forEach(function (prod) {
+                            if (prod.co_landing && prod.co_landing==val) {
+                                val = prod.co_correl;
+                            }
+                        });
                     }
                     if (a==='cc_usuario_c') {
                         self.cargarUsuarios((function(val) { return function () {
@@ -492,15 +632,16 @@ $(document).ready(function () {
                     }
                 }
                 self.lead.priorizar = false;
-                self.buscarDuplicados(lead.id, lead.phone_mobile);
+                self.buscarDuplicados(lead.id, lead.phone_mobile, lead.crm_landing_code_c);
+                self.cargarHistorico(lead.id, lead.phone_mobile);
                 setTimeout(function (){$("#input_telefono").focus();}, 100);
             },
-            buscarDuplicados : function (id, phone) {
+            buscarDuplicados : function (id, phone, landing) {
                 var self = this;
                 self.duplicados.splice(0);
                 $.ajax({
                     method: 'get',
-                    url: window.API_BASE+'/lead/'+id+'/duplicados?phone=' + encodeURIComponent(phone),
+                    url: window.API_BASE+'/lead/'+id+'/duplicados?phone=' + encodeURIComponent(phone)+'&landing='+landing,
                     dataType: 'json',
                     success: function (res) {
                         res.data.forEach(function (row) {
@@ -508,6 +649,20 @@ $(document).ready(function () {
                                 row.isDuplicated = true;
                                 self.duplicados.push(row);
                             }
+                        });
+                    }
+                });
+            },
+            cargarHistorico : function (id, phone) {
+                var self = this;
+                self.historico.splice(0);
+                $.ajax({
+                    method: 'get',
+                    url: window.API_BASE+'/lead/'+id+'/historico?phone=' + encodeURIComponent(phone),
+                    dataType: 'json',
+                    success: function (res) {
+                        res.data.forEach(function (row) {
+                            self.historico.push(row);
                         });
                     }
                 });
@@ -634,6 +789,14 @@ $(document).ready(function () {
                 });
                 return res;
             },
+            getCcUsuarioCargo : function (value) {
+                var self = this;
+                var res = '';
+                self.usuarios.forEach(function (row) {
+                    if (row.us_usuario===value) res = row.us_cargo;
+                });
+                return res;
+            },
             getCcUsuarioEmail : function (value) {
                 var self = this;
                 var res = '';
@@ -643,6 +806,9 @@ $(document).ready(function () {
                 return res;
             },
             guardarSinEnviar: function () {
+                $("#confirmarGuardado").modal('show');
+            },
+            guardarSinEnviarConfirmado: function () {
                 var self = this;
                 self.boton = 'guardar';
                 self.runningRequest = true;
@@ -696,6 +862,8 @@ $(document).ready(function () {
                         "cc_usuario_email" : self.getCcUsuarioEmail(self.lead.cc_usuario_c),
                         "cc_edad" : nvl(self.lead.cc_edad_c),
                         "crm_extension_c": nvl(self.lead.crm_extension_c),
+                        "cc_usuario_cargo" : self.getCcUsuarioCargo(self.lead.cc_usuario_c),
+                        "cc_usuario_cc": window.contact.id,
                     };
                 clientRequest["cc_nro_documento"] = self.lead.crm_nro_documento_c;
                 clientRequest["cc_tipo_documento"]  = nvl(self.lead.crm_tipo_documento_c);
@@ -773,7 +941,15 @@ $(document).ready(function () {
                         "cc_usuario_email" : self.getCcUsuarioEmail(self.lead.cc_usuario_c),
                         "cc_edad" : nvl(self.lead.cc_edad_c),
                         "crm_extension_c": nvl(self.lead.crm_extension_c),
+                        "cc_usuario_cargo" : self.getCcUsuarioCargo(self.lead.cc_usuario_c),
+
+                        "cc_usuario_cc": window.contact.id,
                     };
+				if (window.contact.id=='1') {
+                    alert("No es posible enviar el lead al SCI por que usted perdio sesión o ingreso incorrectamente. Por favor guarde sus cambios, haga click en Sugar CRM [salir] y vuelva a ingresar al sistema.");
+					return;
+				}
+				
                 if (self.lead.crm_nro_documento_c*1 && nvl(self.lead.crm_tipo_documento_c)) {
                     clientRequest["cc_nro_documento"] = self.lead.crm_nro_documento_c*1;
                     clientRequest["cc_tipo_documento"]  = nvl(self.lead.crm_tipo_documento_c);
@@ -837,7 +1013,8 @@ $(document).ready(function () {
                     method: 'post',
                     url: window.API_BASE+'/lead/'+self.lead.id,
                     data: JSON.stringify({
-                        "status": estado
+                        "status": estado,
+                        "cc_usuario_cc": window.contact.id,
                     }),
                     dataType: 'json',
                     success: function (res) {
@@ -886,6 +1063,12 @@ $(document).ready(function () {
             self.buscarLead();
         }
     });
+    function getUser() {
+        var u = window.location.search.match(/&u=(.+)/);
+        return u ? JSON.parse(decodeURIComponent(u[1]))
+                : {id:'1', name: 'test', user_name: 'test'};
+    }
+    window.contact = getUser();
     window.app = app;
         Vue.component('fecha', {
             template: '#template-fecha',

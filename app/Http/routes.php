@@ -30,6 +30,9 @@ Route::post('/landing/{service}/{code}', function ($service, $code, \Illuminate\
     error_log(var_export($lead, true));
     \App\Lead::completeLeadNames($lead);
     $lead['crm_landing_code_c'] = $code;
+    if (empty($lead['crm_email_c']) && !empty($lead['email1'])) $lead['crm_email_c'] = $lead['email1'];
+    if (empty($lead['email1']) && !empty($lead['crm_email_c'])) $lead['email1'] = $lead['crm_email_c'];
+    $lead['crm_canal_ingreso_c'] = 'LANDING';
     $results = \App\Lead::save($lead);
 
     error_log(print_r($results, true));
@@ -119,6 +122,10 @@ Route::get('/rest/productos', function () {
     return (new \App\FRest\Productos())->call();
 });
 
+Route::get('/rest/getdataall', function () {
+    return (new \App\FRest\Sync())->call();
+});
+
 Route::post('/rest/adicionarCliente', function (\Illuminate\Http\Request $request) {
     sci_check_request($request);
     //$json -> sci
@@ -133,9 +140,11 @@ Route::post('/rest/adicionarCliente', function (\Illuminate\Http\Request $reques
     unset($json->cc_ciudad_nombre);
     unset($json->cc_agencia_nombre);
     unset($json->cc_usuario_nombre);
+    unset($json->cc_usuario_cargo);
     unset($json->cc_usuario_email);
     unset($json->cc_edad);
     unset($json->crm_extension_c);
+    unset($json->cc_usuario_cc);
     return response()->json((new \App\FRest\AdicionaCliente($json))->call());
 });
 
@@ -155,6 +164,9 @@ Route::post('/rest/guardarCliente', function (\Illuminate\Http\Request $request)
 
 Route::get('/lead/{id}/duplicados', function ($id, \Illuminate\Http\Request $request) {
     if (empty($request->input('phone'))) {
+        return ["success" => false, "data" => []];
+    }
+    if (empty($request->input('landing'))) {
         return ["success" => false, "data" => []];
     }
     $leads = \App\Lead::findFromLanding(
@@ -215,6 +227,84 @@ Route::get('/lead/completeData', function (\Illuminate\Http\Request $request) {
     }
     return ["success" => true];
 });
+Route::get('/lead/{id}/historico', function ($id, \Illuminate\Http\Request $request) {
+    if (empty($request->input('phone'))) {
+        return ["success" => false, "data" => []];
+    }
+    $leads = \App\Lead::buscarHistorico(
+        $id,
+        $request->input('phone')
+    );
+
+    return ["success" => true, "data" => $leads];
+});
+
+Route::get('/lead/sync', function (\Illuminate\Http\Request $request) {
+	$data = DB::select("select leads.status as cc_estado, leads.id as cc_nro_oportunidad, DATE_FORMAT(CONVERT_TZ(sci_fecha_asignacion_c,'+00:00','-04:00'), '%Y-%m-%d') as cc_fecha_asignacion_conctac, 
+	    concat(first_name, ' ', last_name) as cc_persona, cc_usuario_c as cc_usuario_asignado, cc_usuario_nombre_c as cc_usuario_asignado_nombre,
+	    (case status
+	        when 'Converted' then 1
+	        else 0
+	        end
+	    ) as cc_asociado,
+		DATE_FORMAT(CONVERT_TZ(sci_fecha_asignacion_c,'+00:00','-04:00'), '%Y-%m-%d') as cc_fecha_asignacion_oficial,
+	    (case status
+	        when 'NoDesea' then DATE_FORMAT(CONVERT_TZ(date_modified,'+00:00','-04:00'), '%Y-%m-%d')
+	        when 'NoCalifica' then DATE_FORMAT(CONVERT_TZ(date_modified,'+00:00','-04:00'), '%Y-%m-%d')
+	        when 'Inubicable' then DATE_FORMAT(CONVERT_TZ(date_modified,'+00:00','-04:00'), '%Y-%m-%d')
+	        when 'Anulado' then DATE_FORMAT(CONVERT_TZ(date_modified,'+00:00','-04:00'), '%Y-%m-%d')
+	        else null
+	        end
+	    ) as cc_fecha_rechazado,
+		DATE_FORMAT(CONVERT_TZ(fecha_conversion_c,'+00:00','-04:00'), '%Y-%m-%d') as cc_fecha_conversion
+	from 
+	    leads left join leads_cstm on (leads.id=leads_cstm.id_c)
+	where
+	    date_entered >= DATE_FORMAT(NOW() ,'%Y-01-01')");
+	return response()->json(["success" => true, 'data' => $data]);
+});
+
+/*
+
+select leads.status as cc_estado, leads.id as cc_nro_oportunidad, DATE_FORMAT(CONVERT_TZ(sci_fecha_asignacion_c,'+00:00','-04:00'), '%Y-%m-%d') as cc_fecha_asignacion_conctac, 
+    concat(first_name, ' ', last_name) as cc_persona, cc_usuario_c as cc_usuario_asignado, cc_usuario_nombre_c as cc_usuario_asignado_nombre,
+    (case status
+        when 'Converted' then 1
+        else 0
+        end
+    ) as cc_asociado,
+	DATE_FORMAT(CONVERT_TZ(sci_fecha_asignacion_c,'+00:00','-04:00'), '%Y-%m-%d') as cc_fecha_asignacion_oficial,
+    (case status
+        when 'NoDesea' then DATE_FORMAT(CONVERT_TZ(date_modified,'+00:00','-04:00'), '%Y-%m-%d')
+        when 'NoCalifica' then DATE_FORMAT(CONVERT_TZ(date_modified,'+00:00','-04:00'), '%Y-%m-%d')
+        when 'Inubicable' then DATE_FORMAT(CONVERT_TZ(date_modified,'+00:00','-04:00'), '%Y-%m-%d')
+        when 'Anulado' then DATE_FORMAT(CONVERT_TZ(date_modified,'+00:00','-04:00'), '%Y-%m-%d')
+        else null
+        end
+    ) as cc_fecha_rechazado
+from 
+    leads left join leads_cstm on (leads.id=leads_cstm.id_c)
+where
+    date_entered >= DATE_FORMAT(NOW() ,'%Y-01-01')
+
+cc_estado => el estado asociado al LEAD
+
+cc_nro_oportunidad
+
+cc_fecha_asignacion_conctac => la fecha en la cual el contact asigna el LEAD
+
+cc_persona_id => Nombre completo del cliente
+
+cc_usuario_asignado => El nombre completo (o código si lo tienes registrado) del JEFE DE AGENCIA (Creditos) u OFICIAL DE PLATAFORMA (Captaciones)
+
+cc_asociado => 1 si el lead es CONVERTIDO y 0 si no lo es
+
+cc_fecha_asignacion_oficial => fecha de la asignación al oficial de créditos
+
+cc_fecha_rechazado => Fecha de rechazo del LEAD,
+
+*/
+
 
 /*
 |--------------------------------------------------------------------------
@@ -233,8 +323,20 @@ Route::group(['middleware' => ['web']], function () {
 
 function sci_check_request($request=null) {
      error_log($_SERVER['REQUEST_METHOD'] . ' ' . $_SERVER['REQUEST_URI']);
+	 $body = '';
      if ($request && is_object($request) && in_array('getContent', get_class_methods($request))) {
-         error_log($request->getContent());
+		 $body = $request->getContent();
+         error_log($body);
      }
      error_log('---------------------------------');
+	 if (strtolower($_SERVER['REQUEST_METHOD'])!='get') {
+		 $log = new \App\LeadsLog([
+			 'method' => $_SERVER['REQUEST_METHOD'],
+			 'url' => $_SERVER['REQUEST_URI'],
+			 'content' => @urldecode($body),
+//			 'from' => $_SERVER['REMOTE_HOST'],
+		 ]);
+		 $log->save();
+	 }
 }
+

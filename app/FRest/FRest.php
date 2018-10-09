@@ -40,7 +40,7 @@ class FRest
         }
         $curl = curl_init();
         $options = array(
-//            CURLOPT_PORT           => "40448",
+//            CURLOPT_PORT           => "40443",//"40448",
             CURLOPT_URL            => $this->getUrl(),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING       => "",
@@ -61,11 +61,14 @@ class FRest
         $err = curl_error($curl);
 
         curl_close($curl);
-
         if ($err) {
             throw new Exception("cURL Error #:" . $err);
         } else {
-            return json_decode($response);
+            $json = @json_decode($response);
+			if ($json===null) {
+				die($response);
+			}
+			return $json;
         }
     }
 }
