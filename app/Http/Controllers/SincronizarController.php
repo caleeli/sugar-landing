@@ -22,6 +22,7 @@ class SincronizarController extends Controller
             echo $res;
             return;
         }
+        dd(['conteo'=>count($res), 'datos'=>$res]);
         $response = [];
         foreach ($res as $re) {
             $response[] = $this->procesar($re);
