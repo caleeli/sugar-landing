@@ -31,6 +31,7 @@ class SincronizarController extends Controller
 
     private function procesar($fila)
     {
+        $fila = (array) $fila;
         $id = $fila['cc_nro_oportunidad'];
         $this->verificacion = true;
         $this->verificacionMsg = '';
