@@ -23,12 +23,14 @@ class SincronizarController extends Controller
             return;
         }
         $response = [];
-        $ttl = 10;
         foreach ($res as $re) {
-            $response[] = $this->procesar($re);
-            $ttl--;
-            if (!$ttl)
-                break;
+            $val = $this->procesar($re);
+            if (!$val['verificacion']) {
+                $response[] = $val;
+                $ttl--;
+                if (!$ttl)
+                    break;
+            }
         }
         return view('sync', ['response' => $response]);
     }
