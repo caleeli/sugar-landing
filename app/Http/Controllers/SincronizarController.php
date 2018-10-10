@@ -23,18 +23,18 @@ class SincronizarController extends Controller
             return;
         }
         $response = [];
-        for ($i = 0, $l = min(10, count($res)); $i < $l; $i++) {
-            $response[] = $this->procesar($res[$i]);
+        foreach ($res as $re) {
+            $response[] = $this->procesar($re);
         }
         return view('sync', ['response' => $response]);
     }
 
     private function procesar($fila)
     {
-        $fila = (array) $fila;
-        $id = $fila['cc_nro_oportunidad'];
         $this->verificacion = true;
         $this->verificacionMsg = '';
+        $fila = (array) $fila;
+        $id = $this->checkNroOp($fila['cc_nro_oportunidad']);
         $data = [
             'status' => $this->checkStatus($fila['cc_estado']),
             'fecha_conversion_c' => $this->checkFecha($fila['cc_fecha_conversion']),
@@ -53,6 +53,12 @@ class SincronizarController extends Controller
             'sfi_producto_c' => $this->checkProducto($fila['sfi_producto_c']),
         ];
         return ['verificacion' => $this->verificacion, 'verificacionMsg' => $this->verificacionMsg, 'id' => $id, 'datos' => $data, 'original' => $fila];
+    }
+
+    private function checkNroOp($num)
+    {
+        $this->addMsg(!!$num, 'Missing value cc_nro_oportunidad');
+        return $num;
     }
 
     private function addMsg($ok, $msg)
@@ -77,7 +83,7 @@ class SincronizarController extends Controller
             'Inubicable',
             'Anulado',
             'Duplicado',
-            ], true), 'Estado no valido ' . $status);
+                ], true), 'Estado no valido ' . $status);
         return $status;
     }
 
