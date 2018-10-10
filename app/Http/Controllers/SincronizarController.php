@@ -76,7 +76,7 @@ class SincronizarController extends Controller
             'Inubicable',
             'Anulado',
             'Duplicado',
-            ]), 'Estado no valido ' . $status);
+            ], true), 'Estado no valido ' . $status);
         return $status;
     }
 
