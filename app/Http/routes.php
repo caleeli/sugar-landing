@@ -126,6 +126,7 @@ Route::get('/rest/getdataall', function () {
     return (new \App\FRest\Sync())->call();
 });
 Route::get('/sincronizar', 'SincronizarController@index');
+Route::get('/process', 'SincronizarController@process');
 
 Route::post('/rest/adicionarCliente', function (\Illuminate\Http\Request $request) {
     sci_check_request($request);

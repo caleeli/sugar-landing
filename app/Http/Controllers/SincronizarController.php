@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Lead;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Description of SincronizarController
@@ -17,22 +17,43 @@ class SincronizarController extends Controller
 
     public function index()
     {
+        ini_set('memory_limit', '-1');
+        set_time_limit(-1);
         $res = (new \App\FRest\Sync())->call();
         if (gettype($res) !== 'array') {
             echo $res;
             return;
         }
         $response = [];
+        $validados = 0;
+        $fallados = 0;
         foreach ($res as $re) {
             $val = $this->procesar($re);
             if (!$val['verificacion']) {
-                $response[] = $val;
-                $ttl--;
-                if (!$ttl)
-                    break;
+                $fallados++;
+            } else {
+                $validados++;
             }
+            $response[] = $val;
         }
-        return view('sync', ['response' => $response]);
+        return view('sync', compact('response', 'fallados', 'validados'));
+    }
+
+    public function process()
+    {
+        $val = json_decode(request()->input('d'), true);
+        DB::table('leads')
+            ->where('id', $val['id'])
+            ->update([
+                'status' => $val['datos']['status'],
+        ]);
+        $datos = $val['datos'];
+        unset($datos['status']);
+        unset($datos['fecha_rechazado_c']);
+        DB::table('leads_cstm')
+            ->where('id_c', $val['id'])
+            ->update($datos);
+        return response()->json($val);
     }
 
     private function procesar($fila)
