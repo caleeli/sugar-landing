@@ -53,6 +53,6 @@ class Sync extends FRest
 
     public function __construct()
     {
-        $this->sample = json_decode(file_get_contents('/Users/davidcallizaya/Downloads/getdataall.json'));
+        //$this->sample = json_decode(file_get_contents('/Users/davidcallizaya/Downloads/getdataall.json'));
     }
 }
