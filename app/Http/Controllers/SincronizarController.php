@@ -71,7 +71,7 @@ class SincronizarController extends Controller
             'sci_oficial_asignado_c' => $this->checkOficial($fila['sci_oficial_asignado_c']),
             //'sci_oficial_asignado_desc_c' => $this->checkOficialDesc($fila['sci_oficial_asignado_desc_c']),
             'sci_oficial_asignado_fecha_c' => $this->checkFecha($fila['sci_oficial_asignado_fecha_c']),
-            'sci_sub_estado_credito' => $this->checkSubestado($fila['sci_sub_estado_credito']),
+            //'sci_sub_estado_credito' => $this->checkSubestado($fila['sci_sub_estado_credito']),
             'sci_subestado_credito_char_c' => $this->checkSubestadoChar($fila['sci_subestado_credito_char_c']),
             'sci_subestado_credito_desc_c' => $this->checkSubestadoDesc($fila['sci_subestado_credito_desc_c']),
             'sfi_monto_c' => $this->checkMonto($fila['sfi_monto_c']),
