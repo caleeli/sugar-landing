@@ -19,6 +19,7 @@ class SincronizarController extends Controller
     {
         ini_set('memory_limit', '-1');
         set_time_limit(-1);
+        file_put_contents(public_path('js/sincronizacion.sql'), '');
         $res = (new \App\FRest\Sync())->call();
         if (gettype($res) !== 'array') {
             echo $res;
@@ -27,8 +28,40 @@ class SincronizarController extends Controller
         $response = [];
         $validados = 0;
         $fallados = 0;
+        $file = fopen(public_path('js/sincronizacion.sql'), 'w');
+        fwrite($file, "START TRANSACTION;\n");
         foreach ($res as $re) {
             $val = $this->procesar($re);
+            fwrite($file,
+                "update leads set status='" . $val['datos']['status'] . "' where id='".$val['id']."';\n");
+            fwrite($file,
+                sprintf("update leads_cstm set 
+            fecha_conversion_c='%s',
+            fecha_rechazado_c='%s',
+            sci_cod_agenda_c='%s',
+            sci_fecha_asignacion_c='%s',
+            sci_oficial_asignado_c='%s',
+            sci_oficial_asignado_fecha_c='%s',
+            sci_subestado_credito_char_c='%s',
+            sci_subestado_credito_desc_c='%s',
+            sfi_monto_c='%s',
+            sfi_nro_cuenta_c='%s',
+            sfi_nro_prestamo_c='%s',
+            sfi_producto_c='%s'
+            where id_c='%s';\n", $val['datos']['fecha_conversion_c'],
+                    $val['datos']['fecha_rechazado_c'],
+                    $val['datos']['sci_cod_agenda_c'],
+                    $val['datos']['sci_fecha_asignacion_c'],
+                    $val['datos']['sci_oficial_asignado_c'],
+                    $val['datos']['sci_oficial_asignado_fecha_c'],
+                    $val['datos']['sci_subestado_credito_char_c'],
+                    $val['datos']['sci_subestado_credito_desc_c'],
+                    $val['datos']['sfi_monto_c'],
+                    $val['datos']['sfi_nro_cuenta_c'],
+                    $val['datos']['sfi_nro_prestamo_c'],
+                    $val['datos']['sfi_producto_c'],
+                    $val['id']
+            ));
             if (!$val['verificacion']) {
                 $fallados++;
             } else {
@@ -36,7 +69,11 @@ class SincronizarController extends Controller
             }
             $response[] = $val;
         }
-        return view('sync', compact('response', 'fallados', 'validados'));
+        fwrite($file, "COMMIT;\n");
+        fclose($file);
+        $sqlUrl = '/js/sincronizacion.sql';
+        return view('sync',
+            compact('response', 'fallados', 'validados', 'sqlUrl'));
     }
 
     public function process()

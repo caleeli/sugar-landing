@@ -1,7 +1,8 @@
 <script src="/js/jquery-3.1.1.min.js"></script>
 <p>Fallados: {{$fallados}}</p>
 <p>Válidados: {{$validados}}</p>
-<p><button id="boton" type="button" onclick="process();">PROCESAR</button></p>
+<p><button disabled id="boton" type="button" onclick="process();">PROCESAR</button></p>
+<p><a href="{{$sqlUrl}}" >DESCARGAR SQL</a></p>
 <textarea id="log" style="width: 100%" rows="12"></textarea>
 <div id="log2" style="width: 100%" rows="12"></div>
 <script>
