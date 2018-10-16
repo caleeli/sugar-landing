@@ -342,3 +342,5 @@ function sci_check_request($request=null) {
 	 }
 }
 
+Route::get('/reports/index.php', 'ReporteController@index');
+Route::get('/reports/report', 'ReporteController@report');
