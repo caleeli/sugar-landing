@@ -37,7 +37,6 @@ class SincronizarController extends Controller
             fwrite($file,
                 sprintf("update leads_cstm set 
             fecha_conversion_c='%s',
-            fecha_rechazado_c='%s',
             sci_cod_agenda_c='%s',
             sci_fecha_asignacion_c='%s',
             sci_oficial_asignado_c='%s',
@@ -49,7 +48,6 @@ class SincronizarController extends Controller
             sfi_nro_prestamo_c='%s',
             sfi_producto_c='%s'
             where id_c='%s';\n", $val['datos']['fecha_conversion_c'],
-                    $val['datos']['fecha_rechazado_c'],
                     $val['datos']['sci_cod_agenda_c'],
                     $val['datos']['sci_fecha_asignacion_c'],
                     $val['datos']['sci_oficial_asignado_c'],
