@@ -30,6 +30,7 @@ class SincronizarController extends Controller
         $fallados = 0;
         $file = fopen(public_path('js/sincronizacion.sql'), 'w');
         fwrite($file, "START TRANSACTION;\n");
+        fwrite($file, "SET time_zone = '-04:00';\n");
         foreach ($res as $re) {
             $val = $this->procesar($re);
             fwrite($file,
