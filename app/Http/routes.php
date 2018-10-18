@@ -242,6 +242,7 @@ Route::get('/lead/{id}/historico', function ($id, \Illuminate\Http\Request $requ
 });
 
 Route::get('/lead/sync', function (\Illuminate\Http\Request $request) {
+        ini_set('memory_limit', '-1');
 	$data = DB::select("select leads.status as cc_estado, leads.id as cc_nro_oportunidad, DATE_FORMAT(CONVERT_TZ(sci_fecha_asignacion_c,'+00:00','-04:00'), '%Y-%m-%d') as cc_fecha_asignacion_conctac, 
 	    concat(first_name, ' ', last_name) as cc_persona, cc_usuario_c as cc_usuario_asignado, cc_usuario_nombre_c as cc_usuario_asignado_nombre,
 	    (case status
