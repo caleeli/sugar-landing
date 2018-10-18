@@ -151,12 +151,14 @@ class SincronizarController extends Controller
 
     private function checkFecha($fecha)
     {
+        /* @var $datetime \DateTime */
         if ($fecha === null) {
             return $fecha;
         }
         $this->verificacion &= $this->addMsg(preg_match('/^(\d\d)\/(\d\d)\/(\d\d\d\d)$/',
                 $fecha), 'Fecha no valida ' . $fecha);
         $datetime = \DateTime::createFromFormat('d/m/Y', $fecha);
+        $datetime->setTime(8, 0, 0);
         $this->verificacion &= $this->addMsg($datetime !== false,
             'Fecha no valida ' . $fecha);
         return $datetime ? $datetime->format('Y-m-d H:i:s') : $fecha;
