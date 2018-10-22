@@ -135,7 +135,9 @@ Route::post('/rest/adicionarCliente', function (\Illuminate\Http\Request $reques
     //$json1 -> sugar
     $json1 = json_decode($request->input("json"));
         $json1->crm_enviado_a_sci_c = 1;
-        $json1->status = 'Assigned';
+        //Se actualiza como guardado hasta que el servicio del SCI devuelva el
+        //resultado correcto
+        $json1->status = 'Guardado';
         $json1->sci_fecha_asignacion_c = date('Y-m-d H:i:s');
         $results = \App\Lead::save(App\Lead::fromCC($json1));
     $json->cc_nro_oportunidad = $results['id'];
@@ -147,7 +149,14 @@ Route::post('/rest/adicionarCliente', function (\Illuminate\Http\Request $reques
     unset($json->cc_edad);
     unset($json->crm_extension_c);
     unset($json->cc_usuario_cc);
-    return response()->json((new \App\FRest\AdicionaCliente($json))->call());
+    $response = (new \App\FRest\AdicionaCliente($json))->call();
+    if ($response === 'success') {
+        $json1->status = 'Assigned';
+        $results = \App\Lead::save(App\Lead::fromCC($json1));
+    } else {
+        $response = 'No se pudo verificar el envio a SCI (se esperaba una respuesta "success"). Se recibio: ' . json_encode($response);
+    }
+    return response()->json($response);
 });
 
 Route::post('/rest/guardarCliente', function (\Illuminate\Http\Request $request) {
