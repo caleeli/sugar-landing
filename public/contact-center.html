@@ -220,18 +220,21 @@
                                                 <div class="col-xs-3 col-md-3">
                                                     <label class="required control-label">Departamento *</label>
                                                     <select class="form-control" required v-model="lead.cc_ciudad_c" v-on:change="cargarOficinas">
+                                                        <option value=""></option>
                                                         <option v-for="row in agencias" v-bind:value="row.su_sucursal">{{row.su_nombre}}</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-xs-3 col-md-3">
                                                     <label class="required control-label">Agencia *</label>
                                                     <select class="form-control" required v-model="lead.cc_agencia_c" v-on:change="cargarUsuarios">
+                                                        <option value=""></option>
                                                         <option v-for="row in oficinas" v-bind:value="row.of_oficina">{{row.of_nombre}}</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-xs-3 col-md-3">
                                                     <label class="required control-label">Funcionario *</label>
                                                     <select class="form-control" required v-model="lead.cc_usuario_c">
+                                                        <option value=""></option>
                                                         <option v-for="row in usuarios" v-bind:value="row.us_usuario">{{row.us_cargo + '-' + row.us_nombre+' '+row.us_paterno}}</option>
                                                     </select>
                                                 </div>
@@ -723,10 +726,14 @@ $(document).ready(function () {
                     url: window.API_BASE+'/rest/usuarios/'+self.lead.cc_agencia_c+'/'+cc.split("-")[1],
                     dataType: 'json',
                     success: function (res) {
+                        self.lead.cc_usuario_c = '';
                         self.usuarios.splice(0);
                         res.forEach(function (row) {
                             self.usuarios.push(row);
                         });
+                        if (self.usuarios[0]) {
+                            self.lead.cc_usuario_c = self.usuarios[0].us_usuario;
+                        }
                     }
                 }).done(function () {
                     if (typeof callback === 'function') {
@@ -736,6 +743,7 @@ $(document).ready(function () {
             },
             cargarOficinas: function () {
                 var self = this;
+                self.lead.cc_agencia_c = '';
                 self.oficinas.splice(0);
                 self.agencias.forEach(function (ciudad) {
                     if (ciudad.su_sucursal==self.lead.cc_ciudad_c) {
@@ -744,6 +752,9 @@ $(document).ready(function () {
                         });
                     }
                 });
+                if (self.oficinas[0]) {
+                    self.lead.cc_agencia_c = self.oficinas[0].of_oficina;
+                }
                 Vue.nextTick(function () {
                   self.cargarUsuarios();
                 });
@@ -755,10 +766,14 @@ $(document).ready(function () {
                     url: window.API_BASE+'/rest/agencias',
                     dataType: 'json',
                     success: function (res) {
+                        self.lead.cc_ciudad_c = '';
                         self.agencias.splice(0);
                         res.forEach(function (row) {
                             self.agencias.push(row);
                         });
+                        if (self.agencias[0]) {
+                            self.lead.cc_ciudad_c = self.agencias[0].su_sucursal;
+                        }
                     }
                 }).done(function () {
                     if (typeof callback === 'function') {
