@@ -743,6 +743,9 @@ $(document).ready(function () {
                         });
                     }
                 });
+                Vue.nextTick(function () {
+                  self.cargarUsuarios();
+                });
             },
             cargarAgencias: function () {
                 var self = this;
